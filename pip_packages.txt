@@ -1,0 +1,3 @@
+Required Packages (paste into terminal):
+
+pip install flask && pip install flask-cors

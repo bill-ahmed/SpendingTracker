@@ -4,10 +4,12 @@ import './App.css';
 
 class App extends Component {
 
+  /**Fetch data from Flask server when this component is mounted.*/
   componentDidMount(){
     this.fetchData();
   }
 
+  /**Simple GET request  */
   fetchData(){
     var options = {
       method: "GET",
@@ -18,7 +20,9 @@ class App extends Component {
     }
 
     const fetch = require('node-fetch');
-    fetch("http://127.0.0.1:5000/test", options).then(console.log);
+    fetch("http://127.0.0.1:5000/test", options)
+    .then(res => res.json())
+    .then(console.log);
   }
 
   render(){
