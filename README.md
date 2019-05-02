@@ -33,16 +33,15 @@ You will need the following software on your computer: (1) GitHub, (2) Node.js a
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 # Running the Project
+IMPORTANT: Always do `npm install` inside the /client folder to install the latest dependencies. <br/>
+In the root of the project directory, you will want to run: `python server.js`. <br/>
+Next, you will want to go into the client directory with `cd client`. <br/>
 
-In the project directory, first you'll want to run:
-
-### `npm install` 
-
-then to start the web app run:
+Finally, to start the web app run:
 
 ### `npm start`
 
-Runs the app in the development mode.<br>
+This runs the app in the development mode.<br>
 Open [https://localhost:3000](https://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br>
