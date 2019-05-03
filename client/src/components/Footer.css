@@ -1,6 +1,4 @@
 * {
-    padding: 0;
-    margin: 0;
     font-family: 'Century Gothic', 'Robot', 'Calibri';
 }
 
@@ -9,7 +7,7 @@
     flex-direction: row;
     align-items: center;
 
-    position: fixed;
+    position: absolute;
     bottom: 0;
 
     color: white;

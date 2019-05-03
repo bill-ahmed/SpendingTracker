@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import Trends from './dashboard/Trends';
+import RecentActivity from './dashboard/RecentActivity';
+import DetailedActivity from './dashboard/DetailedActivity';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -50,7 +53,7 @@ class HomePage extends Component{
         const {anchorEl} = this.state.userMenuOpen;
         const open = Boolean(anchorEl);
         return(
-            <div className="homePage">
+            <div className="dashboard">
                 {/* Dashboard located in the header; controls main navigation */}
                 <AppBar position="static" color="default">
                     <Toolbar>
@@ -100,11 +103,13 @@ class HomePage extends Component{
                     </MenuItem>
                 </Menu>
 
-                <body>
-                    <div className="mainContainer">
-                        
+                <div className="mainContainer">
+                    <div className="trendsDetailedActivity">
+                        <Trends className="trends"/>
+                        <DetailedActivity className="detailedActivity"/>
                     </div>
-                </body>
+                    <RecentActivity className="recentActivity"/>
+                </div>
             </div>
         );
     }

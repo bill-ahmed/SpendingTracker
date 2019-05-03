@@ -33,12 +33,12 @@ class App extends Component {
   render(){
     return (
       <div className="container">
-          {/* Handle routing for all the components */}
-          <Switch>
-            <Route exact path="/" component={LoginPage}/>
-            <Route exact path="/dashboard" component={Dashboard}/>
-          </Switch>
-      <Footer/>
+        {/* Handle routing for all the components */}
+        <Switch>
+          <Route exact path="/" component={LoginPage}/>
+          <Route exact path="/dashboard" component={Dashboard}/>
+        </Switch>
+        <Footer/>
       </div>
     );
   }
