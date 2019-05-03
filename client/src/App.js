@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import HomePage from './components/HomePage';
+import { Router, Switch, Route, Link } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import Dashboard from './components/Dashboard';
+import Footer from './components/Footer';
 import './App.css';
 
 class App extends Component {
@@ -9,7 +12,7 @@ class App extends Component {
     this.fetchData();
   }
 
-  /**Simple GET request  */
+  /**Simple GET request to test server.js api */
   fetchData(){
     var options = {
       method: "GET",
@@ -21,14 +24,21 @@ class App extends Component {
 
     const fetch = require('node-fetch');
     fetch("http://127.0.0.1:5000/test", options)
-    .then(res => res.json())
+    .then(res => {
+      console.log(res);
+      return res.json()})
     .then(console.log);
   }
 
   render(){
     return (
       <div className="container">
-        <HomePage/>
+          {/* Handle routing for all the components */}
+          <Switch>
+            <Route exact path="/" component={LoginPage}/>
+            <Route exact path="/dashboard" component={Dashboard}/>
+          </Switch>
+      <Footer/>
       </div>
     );
   }

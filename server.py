@@ -9,7 +9,7 @@ CORS(app)
 @app.route('/test', methods = ['GET'])
 def test():
     # Format the response as JSON object
-    return jsonify({"response": "hello world", "ok": True})
+    return jsonify({"response": "hello world"})
 
 
 if __name__ == '__main__':

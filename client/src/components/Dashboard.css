@@ -1,0 +1,24 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Century Gothic', 'Robot', 'Calibri';
+}
+
+.homePage{
+    width: 100%;
+    height: 100%;
+}
+
+.homePage body .mainContainer{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    width: 100%;
+    height: 100%;
+}
+
+.homePage .heading{
+    flex-grow: 1;
+    font-size: 30px;
+}

@@ -1,0 +1,30 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Century Gothic', 'Robot', 'Calibri';
+}
+
+.footer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    position: fixed;
+    bottom: 0;
+
+    color: white;
+    background-color: black;
+
+    width: 100%;
+    height: 50px;
+}
+
+.footer .bottomNavigation{
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+}
