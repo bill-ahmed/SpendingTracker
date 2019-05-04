@@ -19,22 +19,27 @@ firebase_admin.initialize_app(cred)
 # Initialize db
 db = firestore.client()
 
-users_ref = db.collection(u'users')
-docs = users_ref.stream()
-
-for doc in docs:
-    print(u'{} => {}'.format(doc.id, doc.to_dict()))
-
 '''*** API routes ***'''
 @app.route('/test', methods = ['GET'])
 def test():
+    # Store results from firestore
+    resp = []
+
+    # Get all records for user
+    users_ref = db.collection(u'users/bilal/records')
+    docs = users_ref.stream()
+
+    for doc in docs:
+        # Format and append results to resp array
+        resp.append({"id": doc.id, "data": doc.to_dict()})
+
     # Format the response as JSON object
-    return jsonify({"response": "hello world"})
+    return jsonify(resp)
 
 
 if __name__ == '__main__':
     if os.environ['ENV'] == 'dev':
-        app.run(debug=True, port=5000, ssl_context="adhoc")
+        app.run(debug=True, port=5000)
     else:
         app.run(port=5000)
     

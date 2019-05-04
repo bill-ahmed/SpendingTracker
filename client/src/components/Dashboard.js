@@ -13,6 +13,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
+import firebase from 'firebase';
 import './Dashboard.css';
 
 class HomePage extends Component{
@@ -21,13 +22,40 @@ class HomePage extends Component{
         super(props);
 
         // Bind all functions to "this"
+        this.fetchData = this.fetchData.bind(this);
         this.handleUserMenuOpen = this.handleUserMenuOpen.bind(this);
         this.handleUserMenuClose = this.handleUserMenuClose.bind(this);
+
+        // Retrieve name of user currently signed-in
+        try{
+            var userName = firebase.auth().currentUser.displayName.split(" ")
+        } catch{
+            this.handleLogOut();
+        }
 
         this.state = {
             userMenuOpen: {anchorEl: null},
             currUserMenuItem: null,
+            userName: userName,
         }
+    }
+
+    /**Simple GET request to test server.js api */
+    fetchData(){
+        var options = {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        }
+
+        const fetch = require('node-fetch');
+        fetch("http://127.0.0.1:5000/test", options)
+        .then(res => {
+            console.log(res);
+            return res.json()})
+        .then(console.log);
     }
 
     handleUserMenuOpen(event){
@@ -45,6 +73,7 @@ class HomePage extends Component{
     }
 
     handleLogOut(){
+        firebase.auth().signOut();
         window.location.href = "/";
     }
 
@@ -61,12 +90,12 @@ class HomePage extends Component{
                             Dashboard
                         </div>
 
-                        <Button variant="text" color="inherit">
-                            Home
+                        <Button variant="text" color="inherit" onClick={() => this.fetchData()}>
+                            Get Data
                         </Button>
 
                         <IconButton variant="text" onClick={this.handleUserMenuOpen} color="inherit">
-                            <Avatar>JD</Avatar>
+                            <Avatar>{this.state.userName[0][0] + this.state.userName[this.state.userName.length - 1][0]}</Avatar>
                         </IconButton>
                     </Toolbar>
                 </AppBar>
@@ -82,7 +111,7 @@ class HomePage extends Component{
 
                     {/* Name of Person */}
                     <ListItem>
-                        <ListItemText primary="John Doe"/>
+                        <ListItemText primary={this.state.userName.join(" ")}/>
                     </ListItem>
 
                     <Divider/>
