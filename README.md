@@ -34,7 +34,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 # Running the Project
 IMPORTANT: Always do `npm install` inside the /client folder to install the latest dependencies. <br/>
-In the root of the project directory, you will want to run: `python server.js`. <br/>
+In the root of the project directory, you will want to run: `export ENV=dev && python server.js` in Bash and `set ENV=dev && python server.js` in Windows CMD. <br/>
 Next, you will want to go into the client directory with `cd client`. <br/>
 
 Finally, to start the web app run:

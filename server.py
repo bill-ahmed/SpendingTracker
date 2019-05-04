@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 
@@ -13,4 +14,8 @@ def test():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000, ssl_context="adhoc")
+    if os.environ['ENV'] == 'dev':
+        app.run(debug=True, port=5000, ssl_context="adhoc")
+    else:
+        app.run(port=5000)
+    
