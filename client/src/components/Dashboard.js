@@ -26,17 +26,22 @@ class HomePage extends Component{
         this.handleUserMenuOpen = this.handleUserMenuOpen.bind(this);
         this.handleUserMenuClose = this.handleUserMenuClose.bind(this);
 
-        // Retrieve name of user currently signed-in
-        try{
-            var userName = firebase.auth().currentUser.displayName.split(" ")
-        } catch{
+        // If userName is not set, sign-out this user
+        if(localStorage.getItem("userName") === null){
             this.handleLogOut();
         }
+
+        // Retrieve name of user currently signed-in
+        // try{
+        //     var userName = firebase.auth().currentUser.displayName.split(" ")
+        // } catch{
+        //     this.handleLogOut();
+        // }
 
         this.state = {
             userMenuOpen: {anchorEl: null},
             currUserMenuItem: null,
-            userName: userName,
+            userName: localStorage.getItem("userName").split(" "),
         }
     }
 
@@ -73,6 +78,7 @@ class HomePage extends Component{
     }
 
     handleLogOut(){
+        localStorage.removeItem("userName")
         firebase.auth().signOut();
         window.location.href = "/";
     }

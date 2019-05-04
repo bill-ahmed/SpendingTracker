@@ -53,17 +53,24 @@ class LoginPage extends Component{
                 </div>
             )
         }
+        
+        // Store this user's name in local storage
+        localStorage.setItem("userName", firebase.auth().currentUser.displayName);
+
         return(
             <div className="loginContainer">
-                <p>Welcome {firebase.auth().currentUser.displayName}! You are now signed-in.</p>
+                <h2>Welcome {firebase.auth().currentUser.displayName}!</h2>
                 <br/>
+                <h4>You are signed-in, click Dashboard to continue.</h4>
+                <br/>
+                <br/>
+
                 <Link to="/dashboard">
                     <Button variant="contained" color="primary">Dashboard</Button>
                 </Link>
-                {console.log(firebase.auth().currentUser)}
                 <br/>
-                <Button variant="contained" color="default" onClick={() => firebase.auth().signOut()}>Sign-out</Button>
 
+                <Button variant="contained" color="default" onClick={() => firebase.auth().signOut()}>Sign-out</Button>
             </div>
         )
     }
