@@ -16,6 +16,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import firebase from 'firebase';
 import './Dashboard.css';
 
+const fetch = require('node-fetch');
+
 class HomePage extends Component{
 
     constructor(props){
@@ -23,6 +25,7 @@ class HomePage extends Component{
 
         // Bind all functions to "this"
         this.fetchData = this.fetchData.bind(this);
+        this.updateData = this.updateData.bind(this);
         this.handleUserMenuOpen = this.handleUserMenuOpen.bind(this);
         this.handleUserMenuClose = this.handleUserMenuClose.bind(this);
 
@@ -45,22 +48,32 @@ class HomePage extends Component{
         }
     }
 
-    /**Simple GET request to test server.js api */
+    /**POST request to server.js API, response is transaction data */
     fetchData(){
+        var endpoint = "https://127.0.0.1:5000/_api/fetchData";
+        var body = {
+            "accessToken": localStorage.getItem("accessToken"),
+        }
+
         var options = {
-            method: "GET",
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-            }
+            },
+            body: JSON.stringify(body),
         }
 
-        const fetch = require('node-fetch');
-        fetch("http://127.0.0.1:5000/test", options)
+        fetch(endpoint, options)
         .then(res => {
             console.log(res);
             return res.json()})
-        .then(console.log);
+        .then(console.log)
+        .catch((error) => console.log({"Error": error}));
+    }
+
+    updateData(){
+        //TO-DO
     }
 
     handleUserMenuOpen(event){
@@ -78,7 +91,8 @@ class HomePage extends Component{
     }
 
     handleLogOut(){
-        localStorage.removeItem("userName")
+        localStorage.removeItem("userName");
+        localStorage.removeItem("accessToken");
         firebase.auth().signOut();
         window.location.href = "/";
     }
@@ -121,11 +135,6 @@ class HomePage extends Component{
                     </ListItem>
 
                     <Divider/>
-
-                    <MenuItem onClick={event => this.handleUserMenuClose(event, "Profile")}
-                    selected={this.state.currUserMenuItem === "Profile"}>
-                        Profile
-                    </MenuItem>
 
                     <MenuItem onClick={event => this.handleUserMenuClose(event, "Settings")}
                     selected={this.state.currUserMenuItem === "Settings"}>

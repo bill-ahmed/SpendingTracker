@@ -22,8 +22,8 @@ class LoginPage extends Component{
         signInFlow: 'popup',
         // We will display Google and Facebook as auth providers.
         signInOptions: [
-            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            firebase.auth.EmailAuthProvider.PROVIDER_ID
+            firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID
         ],
         callbacks: {
             // Avoid redirects after sign-in.
@@ -54,6 +54,13 @@ class LoginPage extends Component{
             )
         }
         
+        // Get current user's access Token and add to local storage
+        firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then((accessToken) => {
+            localStorage.setItem("accessToken", accessToken);
+        }).catch(function(error) {
+            console.log(error);
+        });
+
         // Store this user's name in local storage
         localStorage.setItem("userName", firebase.auth().currentUser.displayName);
 

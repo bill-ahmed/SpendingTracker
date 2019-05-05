@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+from firebase_admin import credentials, firestore, auth
+import json
 import sys
 import os
 
@@ -20,26 +20,43 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 '''*** API routes ***'''
-@app.route('/test', methods = ['GET'])
+@app.route('/_api/fetchData', methods = ['POST'])
 def test():
+    data = request.json
+
     # Store results from firestore
     resp = []
 
-    # Get all records for user
-    users_ref = db.collection(u'users/bilal/records')
+    # 1. Verify user's accessToken
+    try:
+        decoded_token = auth.verify_id_token(data["accessToken"])
+    except:
+        # If verification fails, return error message
+        response = jsonify({"ErrorMessage": "Invalid Access Token"})
+        response.status_code = 400
+        return response
+    
+    uid = decoded_token['uid']
+    
+    # 2. Build the path where the user UID has all their transactions
+    endpoint = u'users/' + uid + u'/records'
+    # print(endpoint, file=sys.stdout)
+
+    # 3. Get all records for current user
+    users_ref = db.collection(endpoint)
     docs = users_ref.stream()
 
     for doc in docs:
         # Format and append results to resp array
         resp.append({"id": doc.id, "data": doc.to_dict()})
 
-    # Format the response as JSON object
+    # 4. Format and return the response as JSON object
     return jsonify(resp)
 
 
 if __name__ == '__main__':
     if os.environ['ENV'] == 'dev':
-        app.run(debug=True, port=5000)
+        app.run(debug=True, port=5000, ssl_context="adhoc")
     else:
         app.run(port=5000)
     
