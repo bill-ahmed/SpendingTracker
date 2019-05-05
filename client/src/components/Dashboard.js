@@ -45,6 +45,7 @@ class HomePage extends Component{
             userMenuOpen: {anchorEl: null},
             currUserMenuItem: null,
             userName: localStorage.getItem("userName").split(" "),
+            transactionData: {},
         }
     }
 
@@ -68,7 +69,7 @@ class HomePage extends Component{
         .then(res => {
             console.log(res);
             return res.json()})
-        .then(console.log)
+        .then(resp => this.setState({transactionData: resp}))
         .catch((error) => console.log({"Error": error}));
     }
 
@@ -149,10 +150,10 @@ class HomePage extends Component{
 
                 <div className="mainContainer">
                     <div className="trendsDetailedActivity">
-                        <Trends className="trends"/>
-                        <DetailedActivity className="detailedActivity"/>
+                        <Trends className="trends" fetchData={this.fetchData}/>
+                        <DetailedActivity className="detailedActivity" fetchData={this.fetchData} />
                     </div>
-                    <RecentActivity className="recentActivity"/>
+                    {/* <RecentActivity className="recentActivity"/> */}
                 </div>
             </div>
         );

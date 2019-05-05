@@ -61,30 +61,53 @@ def test():
 '''
 def formatTransactionRecords(docs):
     resp = {}
+    resp["amountPerLocation"] = dict()
+    resp["amountPerDay"] = dict()
+    totalTransactionsPerDate = dict()
+
     raw_data = []
 
-    # 1. Store ID's of eahc transaction
+    # 1.1 Store ID's of eahc transaction
     uid = []
-    # 2. Store the names of each location
+    # 1.2 Store the names of each location
     locations = []
-    # 3. Store the amount spent at each location
+    # 1.3 Store the amount spent at each location
     amountSpent = []
+
+    # 2.1 All the unique dates that transactions were made
+    transactionDates = []
+    # 2.2 Total expenses per date
+    totalExpenses = []
 
     for doc in docs:
         temp_doc = doc.to_dict()
 
-        # Append appropriate information to each array
+        # Apend appropriate information to each arrayp
         uid.append(doc.id)
         locations.append(temp_doc["Title"])
         amountSpent.append(temp_doc["Amount"])
 
+        # Add data to the resp["amountPerDay"] dictionary
+        if(temp_doc["Date"] in totalTransactionsPerDate):
+            totalTransactionsPerDate[temp_doc["Date"]] += temp_doc["Amount"]
+        else:
+            totalTransactionsPerDate[temp_doc["Date"]] = temp_doc["Amount"]
+
         # Append unformatted data to the end in case we need it later on...
         raw_data.append({"id": doc.id, "data": doc.to_dict()})
+    
+    # Go through the resp["amountPerDay"] dictionary an collect all keys and values into separate 
+    for key in totalTransactionsPerDate:
+        transactionDates.append(key)
+        totalExpenses.append(totalTransactionsPerDate[key])
+    
+    resp["amountPerDay"]["dates"] = transactionDates
+    resp["amountPerDay"]["totalExpenses"] = totalExpenses
 
-    resp["uid"] = uid
-    resp["locations"] = locations
-    resp["amountSpend"] = amountSpent
-    resp["raw_data"] = raw_data
+    resp["amountPerLocation"]["uid"] = uid
+    resp["amountPerLocation"]["locations"] = locations
+    resp["amountPerLocation"]["amountSpent"] = amountSpent
+    resp["amountPerLocation"]["raw_data"] = raw_data
 
     return resp
 
