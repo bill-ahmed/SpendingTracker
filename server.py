@@ -11,14 +11,16 @@ app = Flask(__name__)
 # Enable CORS
 CORS(app)
 
-'''*** Initialize connection to Firebase databse (firestore) ***'''
-# Use a service account
 # If in dev environment, use relative local path
-if os.environ['ENV'] == 'dev':
-    cred = credentials.Certificate('./serviceAccount.json')
-else:
+try:
+    if os.environ['ENV'] == 'dev':
+        cred = credentials.Certificate('./serviceAccount.json')
+except:
     cred = credentials.Certificate('/etc/secrets/serviceAccount.json')
 
+
+'''*** Initialize connection to Firebase databse (firestore) ***'''
+# Use a service account
 firebase_admin.initialize_app(cred)
 
 # Initialize db
@@ -60,8 +62,9 @@ def test():
 
 
 if __name__ == '__main__':
-    if os.environ['ENV'] == 'dev':
-        app.run(debug=True, port=5000)
-    else:
+    try:
+        if os.environ['ENV'] == 'dev':
+            app.run(debug=True, port=5000)
+    except:
         app.run()
     
