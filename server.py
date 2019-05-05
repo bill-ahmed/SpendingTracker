@@ -27,12 +27,9 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 '''*** API routes ***'''
-@app.route('/_api/fetchData', methods = ['POST'])
+@app.route('/_api/fetchTransactions', methods = ['POST'])
 def test():
     data = request.json
-
-    # Store results from firestore
-    resp = []
 
     # 1. Verify user's accessToken
     try:
@@ -53,13 +50,43 @@ def test():
     users_ref = db.collection(endpoint)
     docs = users_ref.stream()
 
-    for doc in docs:
-        # Format and append results to resp array
-        resp.append({"id": doc.id, "data": doc.to_dict()})
+    resp = formatTransactionRecords(docs)
 
     # 4. Format and return the response as JSON object
     return jsonify(resp)
 
+
+'''*** Format the data recieved from Firestore into a more usable format ***
+    * (dict) => dict
+'''
+def formatTransactionRecords(docs):
+    resp = {}
+    raw_data = []
+
+    # 1. Store ID's of eahc transaction
+    uid = []
+    # 2. Store the names of each location
+    locations = []
+    # 3. Store the amount spent at each location
+    amountSpent = []
+
+    for doc in docs:
+        temp_doc = doc.to_dict()
+
+        # Append appropriate information to each array
+        uid.append(doc.id)
+        locations.append(temp_doc["Title"])
+        amountSpent.append(temp_doc["Amount"])
+
+        # Append unformatted data to the end in case we need it later on...
+        raw_data.append({"id": doc.id, "data": doc.to_dict()})
+
+    resp["uid"] = uid
+    resp["locations"] = locations
+    resp["amountSpend"] = amountSpent
+    resp["raw_data"] = raw_data
+
+    return resp
 
 if __name__ == '__main__':
     try:
