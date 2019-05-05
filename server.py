@@ -13,7 +13,12 @@ CORS(app)
 
 '''*** Initialize connection to Firebase databse (firestore) ***'''
 # Use a service account
-cred = credentials.Certificate('./serviceAccount.json')
+# If in dev environment, use relative local path
+if os.environ['ENV'] == 'dev':
+    cred = credentials.Certificate('./serviceAccount.json')
+else:
+    cred = credentials.Certificate('/etc/secrets/serviceAccount.json')
+
 firebase_admin.initialize_app(cred)
 
 # Initialize db
@@ -56,7 +61,7 @@ def test():
 
 if __name__ == '__main__':
     if os.environ['ENV'] == 'dev':
-        app.run(debug=True, port=5000, ssl_context="adhoc")
+        app.run(debug=True, port=5000)
     else:
-        app.run(port=5000)
+        app.run()
     

@@ -50,7 +50,7 @@ class HomePage extends Component{
 
     /**POST request to server.js API, response is transaction data */
     fetchData(){
-        var endpoint = "https://127.0.0.1:5000/_api/fetchData";
+        var endpoint = "http://127.0.0.1:5000/_api/fetchData";
         var body = {
             "accessToken": localStorage.getItem("accessToken"),
         }
