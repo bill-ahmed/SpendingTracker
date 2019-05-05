@@ -43,14 +43,14 @@ class Trends extends Component{
         .then(resp => {
             console.log(resp)
             // Generate the graphs with the collected data
-            this.generateGraph("line", "trendsLineGraph", resp.amountPerDay.dates, resp.amountPerDay.totalExpenses);
-            this.generateGraph("pie", "trendsPieGraph", resp.amountPerLocation.locations, resp.amountPerLocation.amountSpent)
+            this.generateGraph("line", "trendsLineGraph", "Amount Spent Per Day",resp.amountPerDay.dates, resp.amountPerDay.totalExpenses);
+            this.generateGraph("pie", "trendsPieGraph", "Amount Spent Per Location",resp.amountPerLocation.locations, resp.amountPerLocation.amountSpent)
 
             this.setState({transactionData: resp})})
         .catch((error) => console.log({"Error": error}));
     }
 
-    generateGraph(graphType, elementID, labels, data){
+    generateGraph(graphType, elementID, chartTitle, labels, data){
         console.log({"GRAPH TYPE": graphType, "labels": labels, "data": data})
         var ctx = document.getElementById(elementID)
         var myChart = new Chart(ctx, {
@@ -58,7 +58,7 @@ class Trends extends Component{
             data: {
                 labels: labels,
                 datasets: [{
-                    label: '# of Votes',
+                    label: chartTitle,
                     data: data,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
