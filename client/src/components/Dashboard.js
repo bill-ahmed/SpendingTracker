@@ -13,7 +13,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
+import firebase from 'firebase';
 import './Dashboard.css';
+
+const fetch = require('node-fetch');
 
 class HomePage extends Component{
 
@@ -21,13 +24,56 @@ class HomePage extends Component{
         super(props);
 
         // Bind all functions to "this"
+        this.fetchData = this.fetchData.bind(this);
+        this.updateData = this.updateData.bind(this);
         this.handleUserMenuOpen = this.handleUserMenuOpen.bind(this);
         this.handleUserMenuClose = this.handleUserMenuClose.bind(this);
+
+        // If userName is not set, sign-out this user
+        if(localStorage.getItem("userName") === null){
+            this.handleLogOut();
+        }
+
+        // Retrieve name of user currently signed-in
+        // try{
+        //     var userName = firebase.auth().currentUser.displayName.split(" ")
+        // } catch{
+        //     this.handleLogOut();
+        // }
 
         this.state = {
             userMenuOpen: {anchorEl: null},
             currUserMenuItem: null,
+            userName: localStorage.getItem("userName").split(" "),
         }
+    }
+
+    /**POST request to server.js API, response is transaction data */
+    fetchData(){
+        var endpoint = "https://127.0.0.1:5000/_api/fetchData";
+        var body = {
+            "accessToken": localStorage.getItem("accessToken"),
+        }
+
+        var options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(body),
+        }
+
+        fetch(endpoint, options)
+        .then(res => {
+            console.log(res);
+            return res.json()})
+        .then(console.log)
+        .catch((error) => console.log({"Error": error}));
+    }
+
+    updateData(){
+        //TO-DO
     }
 
     handleUserMenuOpen(event){
@@ -45,6 +91,9 @@ class HomePage extends Component{
     }
 
     handleLogOut(){
+        localStorage.removeItem("userName");
+        localStorage.removeItem("accessToken");
+        firebase.auth().signOut();
         window.location.href = "/";
     }
 
@@ -61,12 +110,12 @@ class HomePage extends Component{
                             Dashboard
                         </div>
 
-                        <Button variant="text" color="inherit">
-                            Home
+                        <Button variant="text" color="inherit" onClick={() => this.fetchData()}>
+                            Get Data
                         </Button>
 
                         <IconButton variant="text" onClick={this.handleUserMenuOpen} color="inherit">
-                            <Avatar>JD</Avatar>
+                            <Avatar>{this.state.userName[0][0] + this.state.userName[this.state.userName.length - 1][0]}</Avatar>
                         </IconButton>
                     </Toolbar>
                 </AppBar>
@@ -82,15 +131,10 @@ class HomePage extends Component{
 
                     {/* Name of Person */}
                     <ListItem>
-                        <ListItemText primary="John Doe"/>
+                        <ListItemText primary={this.state.userName.join(" ")}/>
                     </ListItem>
 
                     <Divider/>
-
-                    <MenuItem onClick={event => this.handleUserMenuClose(event, "Profile")}
-                    selected={this.state.currUserMenuItem === "Profile"}>
-                        Profile
-                    </MenuItem>
 
                     <MenuItem onClick={event => this.handleUserMenuClose(event, "Settings")}
                     selected={this.state.currUserMenuItem === "Settings"}>

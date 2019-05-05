@@ -7,29 +7,6 @@ import './App.css';
 
 class App extends Component {
 
-  /**Fetch data from Flask server when this component is mounted.*/
-  componentDidMount(){
-    this.fetchData();
-  }
-
-  /**Simple GET request to test server.js api */
-  fetchData(){
-    var options = {
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      }
-    }
-
-    const fetch = require('node-fetch');
-    fetch("https://127.0.0.1:5000/test", options)
-    .then(res => {
-      console.log(res);
-      return res.json()})
-    .then(console.log);
-  }
-
   render(){
     return (
       <div className="container">

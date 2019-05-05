@@ -32,17 +32,16 @@ You will need the following software on your computer: (1) GitHub, (2) Node.js a
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# Installing Dependencies/Requirements
+For Flask backend, do `pip install -r requirements.txt` in the root directory. <br/>
+For the React front-end, do `cd client && npm install` to get the latest dependencies. <br/>
+
 # Running the Project
-IMPORTANT: Always do `npm install` inside the /client folder to install the latest dependencies. <br/>
-In the root of the project directory, you will want to run: `python server.js`. <br/>
-Next, you will want to go into the client directory with `cd client`. <br/>
-
-Finally, to start the web app run:
-
-### `npm start`
+To start the Flask back-end do: `export ENV=dev && python server.js` (in Bash), OR `set ENV=dev && python server.js` in Windows CMD. <br/>
+For the front-end, do: `cd client && npm start`. <br/>
 
 This runs the app in the development mode.<br>
-Open [http://localhost:3000](https://localhost:3000) to view it in the browser.
+Open [https://localhost:3000](https://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
