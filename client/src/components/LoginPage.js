@@ -20,7 +20,7 @@ class LoginPage extends Component{
     uiConfig = {
         // Popup signin flow rather than redirect flow.
         signInFlow: 'popup',
-        // We will display Google and Facebook as auth providers.
+        // We will display Email and Google as auth providers.
         signInOptions: [
             firebase.auth.EmailAuthProvider.PROVIDER_ID,
             firebase.auth.GoogleAuthProvider.PROVIDER_ID
@@ -43,6 +43,14 @@ class LoginPage extends Component{
         this.unregisterAuthObserver();
     }
 
+    handleLogOut(){
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userPhoto");
+        localStorage.removeItem("accessToken");
+        firebase.auth().signOut();
+        window.location.reload();
+    }
+
     render(){
         if(!this.state.isAuth){
             return (
@@ -61,8 +69,9 @@ class LoginPage extends Component{
             console.log(error);
         });
 
-        // Store this user's name in local storage
+        // Store this user's name and photo in local storage
         localStorage.setItem("userName", firebase.auth().currentUser.displayName);
+        localStorage.setItem("userPhoto", firebase.auth().currentUser.photoURL);
 
         return(
             <div className="loginContainer">
@@ -77,7 +86,7 @@ class LoginPage extends Component{
                 </Link>
                 <br/>
 
-                <Button variant="contained" color="default" onClick={() => firebase.auth().signOut()}>Sign-out</Button>
+                <Button variant="contained" color="default" onClick={() => this.handleLogOut()}>Sign-out</Button>
             </div>
         )
     }

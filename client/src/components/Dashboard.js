@@ -93,6 +93,7 @@ class HomePage extends Component{
 
     handleLogOut(){
         localStorage.removeItem("userName");
+        localStorage.removeItem("userPhoto");
         localStorage.removeItem("accessToken");
         firebase.auth().signOut();
         window.location.href = "/";
@@ -102,6 +103,9 @@ class HomePage extends Component{
         // Determine if the user menu is open or not
         const {anchorEl} = this.state.userMenuOpen;
         const open = Boolean(anchorEl);
+        const userPhoto = localStorage.getItem("userPhoto");
+        const userDefaultPhoto = require("./assets/default_profile_pic.png");
+
         return(
             <div className="dashboard">
                 {/* Dashboard located in the header; controls main navigation */}
@@ -111,12 +115,16 @@ class HomePage extends Component{
                             Dashboard
                         </div>
 
+                        <Button variant="text" color="inherit" onClick={() => window.location.href = "/"}>
+                            Home
+                        </Button>
+
                         <Button variant="text" color="inherit" onClick={() => this.fetchData()}>
                             Get Data
                         </Button>
 
                         <IconButton variant="text" onClick={this.handleUserMenuOpen} color="inherit">
-                            <Avatar>{this.state.userName[0][0] + this.state.userName[this.state.userName.length - 1][0]}</Avatar>
+                            <Avatar src={userPhoto === "null" ? userDefaultPhoto : userPhoto}/>
                         </IconButton>
                     </Toolbar>
                 </AppBar>
