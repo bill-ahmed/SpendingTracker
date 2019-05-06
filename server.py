@@ -103,10 +103,11 @@ def formatTransactionRecords(docs):
         # Append unformatted data to the end in case we need it later on...
         raw_data.append({"id": doc.id, "data": doc.to_dict()})
     
+    print(totalTransactionsPerDate)
     # Go through the resp["amountPerDay"] dictionary an collect all keys and values into separate 
     for key in totalTransactionsPerDate:
         transactionDates.append(key)
-        totalExpenses.append(totalTransactionsPerDate[key])
+        totalExpenses.append("%.2f" % totalTransactionsPerDate[key]) # Round to 2 decimal places
     
     resp["amountPerDay"]["dates"] = transactionDates
     resp["amountPerDay"]["totalExpenses"] = totalExpenses

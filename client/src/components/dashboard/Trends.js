@@ -1,10 +1,30 @@
 import React, { Component } from 'react';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import './Trends.css'
 
 const Chart = require('chart.js');
 const fetch = require('node-fetch');
+
+// Colours to allow in charts
+const BACKGROUND_COLOURS = [
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(54, 162, 235, 0.2)',
+    'rgba(255, 206, 86, 0.2)',
+    'rgba(75, 192, 192, 0.2)',
+    'rgba(153, 102, 255, 0.2)',
+    'rgba(255, 159, 64, 0.2)'
+]
+
+const BORDER_COLOURS = [
+    'rgba(255, 99, 132, 1)',
+    'rgba(54, 162, 235, 1)',
+    'rgba(255, 206, 86, 1)',
+    'rgba(75, 192, 192, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 159, 64, 1)'
+]
 
 class Trends extends Component{
 
@@ -13,6 +33,7 @@ class Trends extends Component{
 
         this.state = {
             transactionData: {},
+            isLoading: true,
         }
     }
 
@@ -22,6 +43,10 @@ class Trends extends Component{
 
     /**POST request to server.js API, response is transaction data */
     fetchData(){
+
+        // Trigger loading animation for graphs
+        this.setState({isLoading:  true});
+
         var endpoint = "http://127.0.0.1:5000/_api/fetchTransactions";
         var body = {
             "accessToken": localStorage.getItem("accessToken"),
@@ -48,6 +73,8 @@ class Trends extends Component{
 
             this.setState({transactionData: resp})})
         .catch((error) => console.log({"Error": error}));
+
+        this.setState({isLoading: false});
     }
 
     generateGraph(graphType, elementID, chartTitle, labels, data){
@@ -60,23 +87,9 @@ class Trends extends Component{
                 datasets: [{
                     label: chartTitle,
                     data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
+                    backgroundColor: BACKGROUND_COLOURS,
+                    borderColor: BORDER_COLOURS,
+                    borderWidth: 1.3
                 }]
             },
             options: {
@@ -90,6 +103,7 @@ class Trends extends Component{
             }
         });
     }
+
     render(){
 
         return(
@@ -110,8 +124,10 @@ class Trends extends Component{
                     Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.
                 </h5> */}
                 <div className="graphsContainer">
-                    <canvas className="graph" id="trendsLineGraph" width="200" height="100"/>
-                    <canvas className="graph" id="trendsPieGraph" width="200" height="100"/>
+                    {/* Only display graphs once they have been rendered and drawn to canvas */}
+                    {!this.state.isLoading && <canvas className="graph" id="trendsLineGraph" width="200" height="100"/>}
+                    {!this.state.isLoading && <canvas className="graph" id="trendsPieGraph" width="200" height="100"/>}
+                    {this.state.isLoading && <CircularProgress/>}
                 </div>
                 <br/>
                 <br/>
