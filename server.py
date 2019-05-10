@@ -27,13 +27,12 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 '''*** API routes ***'''
-@app.route('/_api/fetchTransactions', methods = ['POST'])
+@app.route('/_api/fetchTransactions', methods = ['GET'])
 def fetchTransactions():
-    data = request.json
 
     # 1. Verify user's accessToken
     try:
-        decoded_token = auth.verify_id_token(data["accessToken"])
+        decoded_token = auth.verify_id_token(request.headers.get("accessToken"))
     except:
         # If verification fails, return error message
         response = jsonify({"ErrorMessage": "Invalid Access Token"})
@@ -177,7 +176,7 @@ def createNewUserEntry(db, uid, decoded_token, endpoint):
 if __name__ == '__main__':
     try:
         if os.environ['ENV'] == 'dev':
-            app.run(debug=True, port=5000)
+            app.run(debug=True, port=5000, threaded=True)
     except:
-        app.run()
+        app.run(threaded=True)
     

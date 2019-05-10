@@ -49,20 +49,17 @@ class HomePage extends Component{
         }
     }
 
-    /**POST request to server.js API, response is transaction data */
+    /**GET request to server.js API, response is transaction data */
     fetchData(){
         var endpoint = "http://127.0.0.1:5000/_api/fetchTransactions";
-        var body = {
-            "accessToken": localStorage.getItem("accessToken"),
-        }
 
         var options = {
-            method: "POST",
+            method: "GET",
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                "accessToken": localStorage.getItem("accessToken")
             },
-            body: JSON.stringify(body),
         }
 
         fetch(endpoint, options)
