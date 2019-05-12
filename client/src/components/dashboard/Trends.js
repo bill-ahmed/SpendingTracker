@@ -41,7 +41,7 @@ class Trends extends Component{
         this.fetchData();
     }
 
-    /**POST request to server.js API, response is transaction data */
+    /**GET request to server.js API, response is transaction data */
     fetchData(){
 
         // Trigger loading animation for graphs
@@ -64,9 +64,10 @@ class Trends extends Component{
             return res.json()})
         .then(resp => {
             console.log(resp)
+
             // Generate the graphs with the collected data
-            this.generateGraph("line", "trendsLineGraph", "Amount Spent Per Day",resp.amountPerDay.dates, resp.amountPerDay.totalExpenses);
-            this.generateGraph("pie", "trendsPieGraph", "Amount Spent Per Location",resp.amountPerLocation.locations, resp.amountPerLocation.amountSpent)
+            this.createGraphs([["line", "trendsLineGraph", "Amount Spent Per Day",resp.amountPerDay.dates, resp.amountPerDay.totalExpenses],
+            ["pie", "trendsPieGraph", "Amount Spent Per Location",resp.amountPerLocation.locations, resp.amountPerLocation.amountSpent]])
 
             this.setState({transactionData: resp})})
         .catch((error) => console.log({"Error": error}));
@@ -74,6 +75,19 @@ class Trends extends Component{
         this.setState({isLoading: false});
     }
 
+    /**Generate graphs based on the data given
+     * (array) => null
+     * Note: "array" is an array of arrays
+     */
+    createGraphs(data){
+        data.map(elem => {
+            this.generateGraph(elem[0], elem[1], elem[2], elem[3], elem[4]);
+        })
+    }
+
+    /**Draw a given graph type to HTML cavas with id=elementID
+     * (string, string, string, object, object) => null
+     */
     generateGraph(graphType, elementID, chartTitle, labels, data){
         console.log({"GRAPH TYPE": graphType, "labels": labels, "data": data})
         var ctx = document.getElementById(elementID)
@@ -108,18 +122,7 @@ class Trends extends Component{
                 <h3>Trends</h3>
                 <Divider/>
                 <br/>
-                {/* <h5>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.
-                    Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.
-                    <br/>
-                    <br/>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.
-                    Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.
-                    <br/>
-                    <br/>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.
-                    Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.
-                </h5> */}
+
                 <div className="graphsContainer">
                     {/* Only display graphs once they have been rendered and drawn to canvas */}
                     {!this.state.isLoading && <canvas className="graph" id="trendsLineGraph" width="200" height="100"/>}
