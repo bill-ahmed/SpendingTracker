@@ -61,22 +61,27 @@ class Trends extends Component{
         fetch(endpoint, options)
         .then(res => {
             console.log(res);
-            return res.json()})
+            // If the response returns okay, stop loading spinner and retrun json result
+            if(res.ok){
+                this.setState({isLoading: false})
+                return res.json();
+            }
+
+            throw "Invalid response!"})
         .then(resp => {
-            console.log(resp)
+            console.log(resp);
 
             // Generate the graphs with the collected data
-            this.createGraphs([["line", "trendsLineGraph", "Amount Spent Per Day",resp.amountPerDay.dates, resp.amountPerDay.totalExpenses],
+            this.createGraphs([["line", "trendsLineGraph", "You Spent:", resp.amountPerDay.dates, resp.amountPerDay.totalExpenses],
             ["pie", "trendsPieGraph", "Amount Spent Per Location",resp.amountPerLocation.locations, resp.amountPerLocation.amountSpent]])
 
             this.setState({transactionData: resp})})
         .catch((error) => console.log({"Error": error}));
 
-        this.setState({isLoading: false});
     }
 
     /**Generate graphs based on the data given
-     * (array) => null
+     * @param data The array of data to display
      * Note: "array" is an array of arrays
      */
     createGraphs(data){

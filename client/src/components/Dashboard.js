@@ -120,6 +120,10 @@ class HomePage extends Component{
                             Get Data
                         </Button>
 
+                        <Button variant="text" color="inherit">
+                            Add Data
+                        </Button>
+
                         <IconButton variant="text" onClick={this.handleUserMenuOpen} color="inherit">
                             <Avatar src={userPhoto === "null" ? userDefaultPhoto : userPhoto}/>
                         </IconButton>

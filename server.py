@@ -52,9 +52,8 @@ def fetchTransactions():
     if(not userExists):
         createNewUserEntry(db, uid, decoded_token, endpoint=u'users')
 
-    # 3. Get all records for current user
-    users_ref = db.collection(endpoint)
-    docs = users_ref.stream()
+    # 3. Get all records for current user, ordered by date
+    docs = db.collection(endpoint).order_by(u"Date").get()
     resp = formatTransactionRecords(docs)
 
     # 4. Format and return the response as JSON object
