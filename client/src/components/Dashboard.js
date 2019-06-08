@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Trends from './dashboard/Trends';
-import RecentActivity from './dashboard/RecentActivity';
+import AddTransaction from './dashboard/AddTransaction';
 import DetailedActivity from './dashboard/DetailedActivity';
+import RecentActivity from './dashboard/RecentActivity';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ListItem from '@material-ui/core/ListItem';
@@ -15,6 +17,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
 import firebase from 'firebase';
 import './Dashboard.css';
+import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
 const fetch = require('node-fetch');
 
@@ -26,8 +29,12 @@ class HomePage extends Component{
         // Bind all functions to "this"
         this.fetchData = this.fetchData.bind(this);
         this.updateData = this.updateData.bind(this);
+        this.createTransaction = this.createTransaction.bind(this);
+
         this.handleUserMenuOpen = this.handleUserMenuOpen.bind(this);
         this.handleUserMenuClose = this.handleUserMenuClose.bind(this);
+        this.handleAddTransactionDialogModalOpen = this.handleAddTransactionDialogModalOpen.bind(this);
+        this.handleAddTransactionDialogModalClose = this.handleAddTransactionDialogModalClose.bind(this);
 
         // If userName is not set, sign-out this user
         if(localStorage.getItem("userName") === null){
@@ -46,6 +53,7 @@ class HomePage extends Component{
             currUserMenuItem: null,
             userName: localStorage.getItem("userName").split(" "),
             transactionData: {},
+            addTransactionDialogOpen: false,
         }
     }
 
@@ -70,6 +78,14 @@ class HomePage extends Component{
         .catch((error) => console.log({"Error": error}));
     }
 
+    /**POST request to store a new transaction
+     * 
+     * @param recordInformation The new record to store.
+     */
+    createTransaction(recordInformation){
+
+    }
+
     updateData(){
         //TO-DO
     }
@@ -88,12 +104,30 @@ class HomePage extends Component{
         }
     }
 
+    handleAddTransactionDialogModalOpen(){
+        this.setState({addTransactionDialogOpen: true});
+    }
+
+    handleAddTransactionDialogModalClose(){
+        this.setState({addTransactionDialogOpen: false});
+    }
+
+    /**Logout the current user via firebase.auth, and other house-keeping items */
     handleLogOut(){
         localStorage.removeItem("userName");
         localStorage.removeItem("userPhoto");
         localStorage.removeItem("accessToken");
-        firebase.auth().signOut();
-        window.location.href = "/";
+        firebase.auth().signOut()
+        .then(() => {
+            // Take user to home screen
+            window.location.href = "/";
+
+        })
+        .catch((err) => {
+            console.log(err);
+            alert("Error when trying to logout. Check console log for details");
+        });
+        
     }
 
     render(){
@@ -120,7 +154,7 @@ class HomePage extends Component{
                             Get Data
                         </Button>
 
-                        <Button variant="text" color="inherit">
+                        <Button variant="text" color="inherit" onClick={() => this.handleAddTransactionDialogModalOpen()}>
                             Add Data
                         </Button>
 
@@ -163,6 +197,9 @@ class HomePage extends Component{
                         <DetailedActivity className="detailedActivity" fetchData={this.fetchData} />
                     </div>
                     {/* <RecentActivity className="recentActivity"/> */}
+
+                    {this.state.addTransactionDialogOpen &&
+                    <AddTransaction handleAddTransactionDialogModalClose={this.handleAddTransactionDialogModalClose}/>}
                 </div>
             </div>
         );

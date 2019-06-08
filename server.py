@@ -5,6 +5,7 @@ from firebase_admin import credentials, firestore, auth
 import json
 import sys
 import os
+import datetime
 
 app = Flask(__name__)
 
@@ -59,6 +60,22 @@ def fetchTransactions():
     # 4. Format and return the response as JSON object
     return jsonify(resp)
 
+@app.route('/_api/createTransaction', methods = ['POST'])
+def createTransaction():
+
+    # 1. Verify user's accessToken
+    accessToken = request.headers.get("accessToken")
+    isAuth = isAuthenticated(accessToken)
+
+    if(not isAuth[0]):
+        # If verification fails, return error message
+        response = jsonify({"ErrorMessage": "Invalid Access Token"})
+        response.status_code = 400
+        return response
+
+
+    # 4. Format and return the response as JSON object
+    return jsonify("Done")
 
 '''* Format the data recieved from Firestore into a more usable format *
     * (dict) => dict
@@ -106,7 +123,6 @@ def formatTransactionRecords(docs):
         # Append unformatted data to the end in case we need it later on...
         raw_data.append({"id": doc.id, "data": doc.to_dict()})
     
-    print(totalTransactionsPerDate)
     # Go through the resp["amountPerDay"] dictionary an collect all keys and values into separate 
     for key in totalTransactionsPerDate:
         transactionDates.append(key)

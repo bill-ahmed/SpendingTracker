@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
+import {fetchData} from '../fetchTransactionData';
 import './Trends.css'
 
 const Chart = require('chart.js');
@@ -67,7 +68,7 @@ class Trends extends Component{
                 return res.json();
             }
 
-            throw "Invalid response!"})
+            throw ["Invalid response! Try to sign-out and sing-in again.", res.json()]})
         .then(resp => {
             console.log(resp);
 
@@ -76,7 +77,9 @@ class Trends extends Component{
             ["pie", "trendsPieGraph", "Amount Spent Per Location",resp.amountPerLocation.locations, resp.amountPerLocation.amountSpent]])
 
             this.setState({transactionData: resp})})
-        .catch((error) => console.log({"Error": error}));
+        .catch((error) => {
+            
+            console.log({"Error": error})});
 
     }
 
