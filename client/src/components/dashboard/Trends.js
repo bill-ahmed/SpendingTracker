@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import {fetchData} from '../fetchTransactionData';
 import './Trends.css'
 
 const Chart = require('chart.js');
@@ -61,7 +60,7 @@ class Trends extends Component{
 
         fetch(endpoint, options)
         .then(res => {
-            console.log(res);
+            //console.log(res);
             // If the response returns okay, stop loading spinner and retrun json result
             if(res.ok){
                 this.setState({isLoading: false})
@@ -70,7 +69,7 @@ class Trends extends Component{
 
             throw ["Invalid response! Try to sign-out and sing-in again.", res.json()]})
         .then(resp => {
-            console.log(resp);
+            //console.log(resp);
 
             // Generate the graphs with the collected data
             this.createGraphs([["line", "trendsLineGraph", "You Spent:", resp.amountPerDay.dates, resp.amountPerDay.totalExpenses],

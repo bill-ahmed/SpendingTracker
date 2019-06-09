@@ -73,9 +73,40 @@ def createTransaction():
         response.status_code = 400
         return response
 
+    # Retrieve user's UID
+    decoded_token = isAuth[1]
+    uid = decoded_token['uid']
 
+    # 2. Build the path where the user UID has all their transactions
+    endpoint = u'users/' + uid + u'/records'
+
+    # Transaction data in the form of a dictionary
+    newTransactionData = request.get_json()
+    
+    # Format the new transaction data into something Firestore will accept
+    postData = {
+        u'Title': newTransactionData['title'],
+        u'Amount': float(newTransactionData['amountSpent']),
+        u'Date': formatDate(newTransactionData['date']),
+        u'Location': newTransactionData['location'],
+        u'Category': newTransactionData['category'],
+        u'Notes': newTransactionData['additionalNotes']
+    }
+    #print(datetime.datetime.now())
+    print(newTransactionData)
     # 4. Format and return the response as JSON object
-    return jsonify("Done")
+    try:
+        db.collection(u'users').document(uid).collection(u'records').add(postData)
+        return jsonify({"ok": True})
+    except:
+        return jsonify({"ok": False, "Error": "An error ocurred while attempting to create a new transaction."})
+
+
+'''* Format a string date into a datetime object. The date must be in the format "MM-DD-YYYY"
+    (str) -> datetime
+'''
+def formatDate(date):
+    return (datetime.datetime(int(date[0:4]), int(date[5:7]), int(date[8:])))
 
 '''* Format the data recieved from Firestore into a more usable format *
     * (dict) => dict
@@ -120,8 +151,8 @@ def formatTransactionRecords(docs):
             else:
                 totalTransactionsPerDate[temp_doc["Date"]] = temp_doc["Amount"]
 
-        # Append unformatted data to the end in case we need it later on...
-        raw_data.append({"id": doc.id, "data": doc.to_dict()})
+            # Append unformatted data to the end in case we need it later on...
+            raw_data.append({"id": doc.id, "data": doc.to_dict()})
     
     # Go through the resp["amountPerDay"] dictionary an collect all keys and values into separate 
     for key in totalTransactionsPerDate:

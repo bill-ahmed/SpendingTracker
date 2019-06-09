@@ -10,9 +10,53 @@ class AddTransaction extends Component{
     constructor(props){
         super(props);
 
+        this.handleInputFieldChange = this.handleInputFieldChange.bind(this);
+        this.handleDataSend = this.handleDataSend.bind(this);
+
         this.state = {
+            title: '',
+            amountSpent: 0.01,
+            date: '',
+            location: '',
+            category: '',
+            additionalNotes: '',
+        }
+    }
+
+    /**Handle the input field information
+     * @param fieldChanged The field that was changed (str)
+     * @param event The new value of the textfield that was changed (int/str).
+     */
+    handleInputFieldChange(event, fieldChanged){
+        if(fieldChanged === "title"){
+            this.setState({title: event.target.value})
+
+        } else if(fieldChanged === "amountSpent"){
+            this.setState({amountSpent: event.target.value})
+
+        } else if(fieldChanged === "date"){
+            this.setState({date: event.target.value})
+
+        } else if(fieldChanged === "location"){
+            this.setState({location: event.target.value})
+
+        } else if(fieldChanged === "category"){
+            this.setState({category: event.target.value})
+
+        } else if(fieldChanged === "additionalNotes"){
+            this.setState({additionalNotes: event.target.value})
 
         }
+        
+        // console.log(event.target.value);
+        // console.log(fieldChanged);
+    }
+
+    /**Verify all input data is valid and send it to back-end api */
+    handleDataSend(){
+        // Send post request and reload the page
+        this.props.createTransaction(this.state);
+        window.location.reload();
     }
 
     render(){
@@ -30,13 +74,30 @@ class AddTransaction extends Component{
 
                         {/* Input textfields */}
                         <div className="inputFields">
-                            <TextField className="singeLineInputField" required label="Title"/>
-                            <TextField className="singeLineInputField" required label="Amount Spent" type="number"/>
-                            <TextField className="singeLineInputField" required label="Date"/>
-                            <TextField className="singeLineInputField" label="Location"/>
-                            <TextField className="singeLineInputField" label="Category"/>
+                            <TextField id="transactionTitle" className="singeLineInputField" 
+                            required InputLabelProps={{shrink: true}} label="Title" error={this.state.title.trim() === ''} 
+                            value={this.state.title} onChange={(event) => this.handleInputFieldChange(event, "title")}/>
+
+                            <TextField id="amountSpent" className="singeLineInputField" 
+                            required label="Amount Spent" type="number" error={this.state.amountSpent < 0} 
+                            value={this.state.amountSpent} onChange={(event) => this.handleInputFieldChange(event, "amountSpent")}/>
+
+                            <TextField id="dateOfTransaction" className="singeLineInputField" 
+                            required InputLabelProps={{shrink: true}} label="Date" type="date" error={this.state.date.trim() === ''} 
+                            value={this.state.date} onChange={(event) => this.handleInputFieldChange(event, "date")}
+                            />
+
+                            <TextField id="locationofTransaction" className="singeLineInputField" 
+                            label="Location" value={this.state.location} onChange={(event) => this.handleInputFieldChange(event, "location")}/>
+
+                            <TextField id="transactionCategory" className="singeLineInputField" 
+                            label="Category" 
+                            value={this.state.category} onChange={(event) => this.handleInputFieldChange(event, "category")}/>
+
                         </div>
-                        <TextField className="multiLineInputField" label="Additional Notes" variant="outlined" multiline rows="3" rowsMax="10" helperText="Maximum of 10 rows."/>
+                        <TextField fullWidth id="additionalNotes" className="multiLineInputField" 
+                        label="Additional Notes" variant="outlined" multiline rows="3" rowsMax="10" helperText="Maximum of 10 lines." 
+                        value={this.state.additionalNotes} onChange={(event) => this.handleInputFieldChange(event, "additionalNotes")}/>
                         
                     </div>
                 </DialogContent>
@@ -47,7 +108,7 @@ class AddTransaction extends Component{
                         Cancel
                     </Button>
 
-                    <Button variant="text" color="primary">
+                    <Button variant="contained" color="primary" onClick={this.handleDataSend}>
                         Add
                     </Button>
                     

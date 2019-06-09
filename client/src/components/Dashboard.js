@@ -83,7 +83,33 @@ class HomePage extends Component{
      * @param recordInformation The new record to store.
      */
     createTransaction(recordInformation){
+        var endpoint = "http://127.0.0.1:5000/_api/createTransaction";
+        
+        var body = {
+            title: recordInformation.title,
+            amountSpent: recordInformation.amountSpent,
+            date: recordInformation.date,
+            location: recordInformation.location,
+            category: recordInformation.category,
+            additionalNotes: recordInformation.additionalNotes}
 
+        var options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                "accessToken": localStorage.getItem("accessToken")
+            },
+            body: JSON.stringify(body)
+        }
+        console.log(recordInformation);
+
+        fetch(endpoint, options)
+        .then(res => {
+            console.log(res);
+            return res.json()})
+        .then(resp => console.log(resp))
+        .catch((error) => console.log({"Error": error}));
     }
 
     updateData(){
@@ -199,7 +225,7 @@ class HomePage extends Component{
                     {/* <RecentActivity className="recentActivity"/> */}
 
                     {this.state.addTransactionDialogOpen &&
-                    <AddTransaction handleAddTransactionDialogModalClose={this.handleAddTransactionDialogModalClose}/>}
+                    <AddTransaction handleAddTransactionDialogModalClose={this.handleAddTransactionDialogModalClose} createTransaction={this.createTransaction}/>}
                 </div>
             </div>
         );
