@@ -61,6 +61,7 @@ class AddTransaction extends Component{
         if(this.validateData()){
             console.log(this.state);
             this.props.createTransaction(this.state);
+            window.location.reload();
 
         }else{
             // Notify user of the error
@@ -73,8 +74,6 @@ class AddTransaction extends Component{
             });
             console.log("Error with transaction data. Please make sure all fields are valid");
         }
-        
-        window.location.reload();
     }
 
     /**Validate that all user inputted data is properly formatted. Updates the state with current validation (true/false)

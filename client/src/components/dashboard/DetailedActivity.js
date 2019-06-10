@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
+import DeleteTransactionModal from './DeleteTransactionModal'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -18,14 +23,29 @@ class DetailedActivity extends Component{
     constructor(props){
         super(props);
 
+        // Bind all functions to "this"
+        this.handleDeleteModalClose = this.handleDeleteModalClose.bind(this);
+        this.handleDeleteModalOpen = this.handleDeleteModalOpen.bind(this);
+        this.removeDate = this.removeDate.bind(this);
+
         this.state={
             transactionData: null,
             isLoading: true,
+            deleteModalOpen: false,
+            transactionToDelete: null,
         }
     }
 
     componentDidMount(){
         this.fetchData();
+    }
+
+    handleDeleteModalOpen(){
+        this.setState({deleteModalOpen: true});
+    }
+
+    handleDeleteModalClose(){
+        this.setState({deleteModalOpen: false});
     }
 
     /**GET request to server.js API, response is transaction data */
@@ -64,10 +84,21 @@ class DetailedActivity extends Component{
             console.log({"Error": error})});
 
     }
+
+    /**Remove transaction that has ID transactionID
+     * @param transactionInfo The unique transaction to remove
+     */
+    removeDate(transactionInfo){
+        // Delete transaction with ID transactionID, then reload the page
+        // this.props.deleteData(transactionID);
+        // window.location.reload();
+        this.setState({transactionToDelete: transactionInfo});
+        this.setState({deleteModalOpen: true});
+    }
     
     render(){
         // Column names of the table, in order
-        let tableHeaders = ["Title", "Amount Spent", "Date", "Location"];
+        let tableHeaders = ["Actions", "Title", "Amount Spent", "Date", "Location"];
 
         // All the rows to display
         let tableData = [];
@@ -94,11 +125,15 @@ class DetailedActivity extends Component{
                     <TableBody>
                         {tableData !==[] && tableData.map((elem) => {
                             return (
-                                <TableRow key={elem.id}>
+                                <TableRow hover key={elem.id}>
+                                    <TableCell>
+                                        <IconButton onClick={() => console.log("Clicked edit for " + elem.id)}><EditIcon/></IconButton>
+                                        <IconButton onClick={() => this.removeDate(elem)}><DeleteIcon/></IconButton>
+                                    </TableCell>
                                     <TableCell>{elem.data.Title}</TableCell>
                                     <TableCell align="right">{"$ "+elem.data.Amount}</TableCell>
                                     <TableCell>{elem.data.Date.slice(0, 16)}</TableCell>
-                                    <TableCell>{elem.data.Location}</TableCell>
+                                    <TableCell>{elem.data.Location === '' ? "N/A": elem.data.Location}</TableCell>
                                 </TableRow>
                             )
                         })}
@@ -115,6 +150,9 @@ class DetailedActivity extends Component{
                 </Table>
                 <br/>
                 <br/>
+
+                {this.state.deleteModalOpen && <DeleteTransactionModal handleDeleteModalClose={this.handleDeleteModalClose} 
+                deleteMethod={() => this.props.deleteData(this.state.transactionToDelete.id)} transactionInfo={this.state.transactionToDelete}/>}
             </Paper>
         );
     }

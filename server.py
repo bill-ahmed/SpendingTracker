@@ -77,9 +77,6 @@ def createTransaction():
     decoded_token = isAuth[1]
     uid = decoded_token['uid']
 
-    # 2. Build the path where the user UID has all their transactions
-    endpoint = u'users/' + uid + u'/records'
-
     # Transaction data in the form of a dictionary
     newTransactionData = request.get_json()
     
@@ -108,6 +105,32 @@ def createTransaction():
         return jsonify({"ok": True})
     except:
         return jsonify({"ok": False, "Error": "An error ocurred while attempting to create a new transaction."})
+
+
+@app.route('/_api/deleteTransaction', methods = ['POST'])
+def deleteTransaction():
+     # 1. Verify user's accessToken
+    accessToken = request.headers.get("accessToken")
+    isAuth = isAuthenticated(accessToken)
+
+    if(not isAuth[0]):
+        # If verification fails, return error message
+        response = jsonify({"ErrorMessage": "Invalid Access Token"})
+        response.status_code = 400
+        return response
+
+    # Retrieve user's UID
+    decoded_token = isAuth[1]
+    uid = decoded_token['uid']
+
+    # Transaction ID in the form of a dictionary
+    transactionID = request.get_json()
+    print("Removing transaction with ID:", transactionID['transactionID'])
+
+    # If transaction exists with id, delete it. Otherwise, this line does nothing
+    db.collection(u'users').document(uid).collection(u'records').document(transactionID['transactionID']).delete()
+
+    return jsonify("Done")
 
 '''* Validate the user data such as title, date, etc.
     (dict) -> bool
