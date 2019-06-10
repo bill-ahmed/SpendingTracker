@@ -27,6 +27,9 @@ firebase_admin.initialize_app(cred)
 # Initialize db
 db = firestore.client()
 
+# Initialize dictionary as a cache
+USER_INFO = dict()
+
 '''*** API routes ***'''
 @app.route('/_api/fetchTransactions', methods = ['GET'])
 def fetchTransactions():
@@ -43,6 +46,11 @@ def fetchTransactions():
 
     decoded_token = isAuth[1]
     uid = decoded_token['uid']
+
+    # Check if user with UID uid already exists in memory
+    if(uid in USER_INFO):
+        # Return this info
+        return jsonify(USER_INFO[uid])
     
     # 2. Build the path where the user UID has all their transactions
     endpoint = u'users/' + uid + u'/records'
@@ -56,6 +64,10 @@ def fetchTransactions():
     # 3. Get all records for current user, ordered by date
     docs = db.collection(endpoint).order_by(u"Date").get()
     resp = formatTransactionRecords(docs)
+
+    # Add this data to memory for user with UID uid
+    USER_INFO[uid] = resp
+    print("Added user with UID", uid, "to memory.")
 
     # 4. Format and return the response as JSON object
     return jsonify(resp)
@@ -87,6 +99,10 @@ def createTransaction():
         response.status_code = 400
         return response
 
+    # Clear entry for user with UID uid from memory
+    if(uid in USER_INFO):
+        USER_INFO.pop(uid)
+        print("Removed user with UID", uid, "from memory.")
 
     print(newTransactionData)
     # Format the new transaction data into something Firestore will accept
@@ -126,6 +142,11 @@ def deleteTransaction():
     # Transaction ID in the form of a dictionary
     transactionID = request.get_json()
     print("Removing transaction with ID:", transactionID['transactionID'])
+
+    # Clear entry for user with UID uid from memory
+    if(uid in USER_INFO):
+        USER_INFO.pop(uid)
+        print("Removed user with UID", uid, "from memory.")
 
     # If transaction exists with id, delete it. Otherwise, this line does nothing
     db.collection(u'users').document(uid).collection(u'records').document(transactionID['transactionID']).delete()
