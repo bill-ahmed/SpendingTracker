@@ -2,10 +2,13 @@
     font-family: 'Century Gothic', 'Robot', 'Calibri';
 }
 
-h3{
-    margin: 8px;
+.detailedActivity h3{
+    margin: 25px 0px 15px 15px;
 }
 
-h5 {
+.detailedActivity h5 {
     margin: 5px;
+}
+.detailedActivity{
+    overflow-x: auto;
 }
