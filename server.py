@@ -83,6 +83,15 @@ def createTransaction():
     # Transaction data in the form of a dictionary
     newTransactionData = request.get_json()
     
+    # Validarte transaction data
+    if(not (validateDate(newTransactionData))):
+        # Since there are errors in the transaction data, return bad request
+        response = jsonify({"ErrorMessage": "Improper transaction data"})
+        response.status_code = 400
+        return response
+
+
+    print(newTransactionData)
     # Format the new transaction data into something Firestore will accept
     postData = {
         u'Title': newTransactionData['title'],
@@ -92,14 +101,37 @@ def createTransaction():
         u'Category': newTransactionData['category'],
         u'Notes': newTransactionData['additionalNotes']
     }
-    #print(datetime.datetime.now())
-    print(newTransactionData)
+
     # 4. Format and return the response as JSON object
     try:
         db.collection(u'users').document(uid).collection(u'records').add(postData)
         return jsonify({"ok": True})
     except:
         return jsonify({"ok": False, "Error": "An error ocurred while attempting to create a new transaction."})
+
+'''* Validate the user data such as title, date, etc.
+    (dict) -> bool
+'''
+def validateDate(data):
+    if((data['title'].strip() == '')):
+        return False
+    
+    # Test if date is valid
+    try:
+        formatDate(data['date'])
+    except:
+        return False
+
+    try:
+        temp = float(data['amountSpent'])
+        # If negative number is given
+        if(temp < 0):
+            return False
+    except:
+        return False
+
+    # All other cases, data should be valid
+    return True
 
 
 '''* Format a string date into a datetime object. The date must be in the format "MM-DD-YYYY"

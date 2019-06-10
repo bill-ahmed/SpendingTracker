@@ -16,6 +16,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
 import firebase from 'firebase';
+import { withSnackbar } from 'notistack';
 import './Dashboard.css';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
@@ -106,7 +107,26 @@ class HomePage extends Component{
 
         fetch(endpoint, options)
         .then(res => {
-            console.log(res);
+            // If response is good, display success message
+            if(res.ok){
+                this.props.enqueueSnackbar("Added Transaction!", {
+                    variant: 'success',
+                    preventDuplicate: true,
+                    action: (key) => (
+                        <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
+                    ),
+                });
+            } else{
+                this.props.enqueueSnackbar("Unable to add transaction. Please try again later.", {
+                    variant: 'error',
+                    preventDuplicate: true,
+                    action: (key) => (
+                        <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
+                    ),
+                });
+            }
+
+            console.log({res});
             return res.json()})
         .then(resp => console.log(resp))
         .catch((error) => console.log({"Error": error}));
@@ -232,4 +252,4 @@ class HomePage extends Component{
     }
 }
 
-export default HomePage;
+export default withSnackbar(HomePage);

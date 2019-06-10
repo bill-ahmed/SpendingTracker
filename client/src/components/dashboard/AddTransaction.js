@@ -4,6 +4,7 @@ import Dialog from '@material-ui/core/Dialog';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
+import { withSnackbar } from 'notistack';
 import './AddTransaction.css';
 
 class AddTransaction extends Component{
@@ -20,6 +21,7 @@ class AddTransaction extends Component{
             location: '',
             category: '',
             additionalNotes: '',
+            dataValidated: false,
         }
     }
 
@@ -54,9 +56,63 @@ class AddTransaction extends Component{
 
     /**Verify all input data is valid and send it to back-end api */
     handleDataSend(){
-        // Send post request and reload the page
-        this.props.createTransaction(this.state);
+
+        // If data is validated, send post request
+        if(this.validateData()){
+            console.log(this.state);
+            this.props.createTransaction(this.state);
+
+        }else{
+            // Notify user of the error
+            this.props.enqueueSnackbar("Error: Please ensure all fields are valid", {
+                variant: 'error',
+                preventDuplicate: true,
+                action: (key) => (
+                    <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
+                ),
+            });
+            console.log("Error with transaction data. Please make sure all fields are valid");
+        }
+        
         window.location.reload();
+    }
+
+    /**Validate that all user inputted data is properly formatted. Updates the state with current validation (true/false)
+     * @returns True/False depending on whether all transaction data is valid or not, respectively
+    */
+    validateData(){
+        let title = this.state.title;
+        let amountSpent = this.state.amountSpent;
+        let date = this.state.date;
+        let isValidated = true;
+        // If title is empty
+        if(title.trim() === ''){
+            isValidated = false;
+        }
+
+        // If valid date is given
+        if(date === ''){isValidated = false;}
+        try {
+            let tempDate = new Date(date);
+        } catch (error) {
+            console.log(error);
+            isValidated = false;
+        }
+
+        // If amount is valid number and positive
+        try {
+            let num = parseFloat(amountSpent);
+            if(num < 0){
+                isValidated = false;
+            }
+        } catch (error) {
+            console.log(error);
+            isValidated = false;
+        }
+
+        // All other cases should be valid
+        this.setState({dataValidated: isValidated});
+        return isValidated;
     }
 
     render(){
@@ -117,4 +173,4 @@ class AddTransaction extends Component{
         );
     }
 }
-export default AddTransaction;
+export default withSnackbar(AddTransaction);

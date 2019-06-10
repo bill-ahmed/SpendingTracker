@@ -4,10 +4,14 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { SnackbarProvider } from 'notistack';
+import { Button } from '@material-ui/core';
 
 ReactDOM.render(
 <Router>
-    <App />
+    <SnackbarProvider maxSnack={2} anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}>
+        <App />
+    </SnackbarProvider>
 </Router>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
