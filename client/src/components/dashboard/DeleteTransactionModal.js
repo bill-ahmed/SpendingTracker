@@ -18,9 +18,9 @@ class DeleteTransactionModal extends Component{
                 <br/>
                 
                 <DialogContent>
-                    <h4>You CANNOT undo this action.</h4>
+                    <h4>You CANNOT undo this action. The following will be removed:</h4>
                     <br/>
-                    <h4>{`"${transactionInfo.data.Title}" for $${transactionInfo.data.Amount} on ${transactionInfo.data.Date}`}</h4>
+                    <h4>{`"${transactionInfo[1]}" for ${transactionInfo[2]} at ${transactionInfo[4]}, on ${transactionInfo[3]}`}</h4>
                 </DialogContent>
 
                 <DialogActions>

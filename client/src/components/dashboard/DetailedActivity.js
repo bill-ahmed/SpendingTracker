@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DeleteTransactionModal from './DeleteTransactionModal'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import MUIDataTable from "mui-datatables";
 import DeleteIcon from '@material-ui/icons/Delete';
 import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
@@ -67,7 +68,7 @@ class DetailedActivity extends Component{
 
         fetch(endpoint, options)
         .then(res => {
-            console.log(res);
+            //console.log(res);
             // If the response returns okay, stop loading spinner and retrun json result
             if(res.ok){
                 this.setState({isLoading: false})
@@ -76,7 +77,7 @@ class DetailedActivity extends Component{
 
             throw ["Invalid response! Try to sign-out and sing-in again.", res.json()]})
         .then(resp => {
-            console.log(resp);
+            //console.log(resp);
 
             this.setState({transactionData: resp})})
         .catch((error) => {
@@ -95,6 +96,26 @@ class DetailedActivity extends Component{
         this.setState({transactionToDelete: transactionInfo});
         this.setState({deleteModalOpen: true});
     }
+
+    handleEditData(transaction){
+        alert(`Editing: ${transaction.id}`);
+    }
+
+    rowPropsToRender(data, dataIndex, rowIndex){
+        console.log({"data": data, "datIndex": dataIndex, "rowIndex": rowIndex});
+        return(
+            <TableRow hover key={data[0]}>
+                <TableCell>
+                    <IconButton onClick={() => console.log("Clicked edit for " + data[0])}><EditIcon/></IconButton>
+                    <IconButton onClick={() => this.removeDate(data)}><DeleteIcon/></IconButton>
+                </TableCell>
+                    <TableCell>{data[1]}</TableCell>
+                    <TableCell align="right">{data[2]}</TableCell>
+                    <TableCell>{data[3]}</TableCell>
+                    <TableCell>{data[4]}</TableCell>
+            </TableRow>
+        );
+    }
     
     render(){
         // Column names of the table, in order
@@ -108,51 +129,35 @@ class DetailedActivity extends Component{
             tableData = this.state.transactionData.raw_data;
         }
 
+        /*Configure data table */
+        const columns = ["Actions", "Title", "Amount Spent", "Date", "Location"];
+        console.log({"table data": tableData});
+        const data = tableData.map(elem => {
+            return ([elem.id, elem.data.Title, "$"+elem.data.Amount, elem.data.Date.slice(0, 16), elem.data.Location === '' ? "N/A" : elem.data.Location])
+        });
+
+        const options = {
+            viewColumns: false, // Show/hide different columns option in toolbar
+            print: false, //Print option in toolbar
+            selectableRows: 'none', // Disable allowing user to select rows
+            elevation: 0,
+            rowsPerPage: 8,
+            rowsPerPageOptions: [8, 15, 20],
+            customRowRender: ((data, dataIndex, rowIndex) => this.rowPropsToRender(data, dataIndex, rowIndex)), // Render custom props for each row
+        };
+
         return(
             <Paper elevation={1} className="detailedActivity">
                 <h3>Detailed Activity</h3>
-                
-                <br/>
-                <Table className="tableData">
-                    <TableHead>
-                        <TableRow key="columnHeaders">
-                            {tableHeaders.map((elem) => {
-                                return (<TableCell>{elem}</TableCell>)
-                            })}
-                        </TableRow>
-                    </TableHead>
 
-                    <TableBody>
-                        {tableData !==[] && tableData.map((elem) => {
-                            return (
-                                <TableRow hover key={elem.id}>
-                                    <TableCell>
-                                        <IconButton onClick={() => console.log("Clicked edit for " + elem.id)}><EditIcon/></IconButton>
-                                        <IconButton onClick={() => this.removeDate(elem)}><DeleteIcon/></IconButton>
-                                    </TableCell>
-                                    <TableCell>{elem.data.Title}</TableCell>
-                                    <TableCell align="right">{"$ "+elem.data.Amount}</TableCell>
-                                    <TableCell>{elem.data.Date.slice(0, 16)}</TableCell>
-                                    <TableCell>{elem.data.Location === '' ? "N/A": elem.data.Location}</TableCell>
-                                </TableRow>
-                            )
-                        })}
-                        {/* Display circular progress bar if loading*/
-                        this.state.isLoading && <CircularProgress/>
-                        }
-                    </TableBody>
-
-                    {/* <TableFooter>
-                        <TableRow>
-                            <TablePagination rowsPerPageOptions={[5, 10, 25]} colSpan={3} rowsPerPage={8} />
-                        </TableRow>
-                    </TableFooter> */}
-                </Table>
-                <br/>
-                <br/>
+                <MUIDataTable
+                data={data}
+                columns={columns}
+                options={options}
+                />
 
                 {this.state.deleteModalOpen && <DeleteTransactionModal handleDeleteModalClose={this.handleDeleteModalClose} 
-                deleteMethod={() => this.props.deleteData(this.state.transactionToDelete.id)} transactionInfo={this.state.transactionToDelete}/>}
+                deleteMethod={() => this.props.deleteData(this.state.transactionToDelete[0])} transactionInfo={this.state.transactionToDelete}/>}
             </Paper>
         );
     }
