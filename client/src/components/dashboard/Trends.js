@@ -93,8 +93,8 @@ function Trends() {
             <div className="graphsContainer">
                 {/* Only display graphs once they have been rendered and drawn to canvas */}
                 {<canvas className="graph" id="trendsLineGraph" width="200" height="100"/>}
+                {isLoading && <CircularProgress className="loadingCircle"/>}
                 {<canvas className="graph" id="trendsPieGraph" width="200" height="100"/>}
-                {isLoading && <CircularProgress/>}
             </div>
             <br/>
             <br/>
