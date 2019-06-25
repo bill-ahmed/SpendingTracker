@@ -102,7 +102,6 @@ class DetailedActivity extends Component{
     }
 
     rowPropsToRender(data, dataIndex, rowIndex){
-        console.log({"data": data, "datIndex": dataIndex, "rowIndex": rowIndex});
         return(
             <TableRow hover key={data[0]}>
                 <TableCell>
