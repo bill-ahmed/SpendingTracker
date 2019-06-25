@@ -132,6 +132,35 @@ class HomePage extends Component{
         .catch((error) => console.log({"Error": error}));
     }
 
+    /**POST request to delete and existing transaction
+     * 
+     * @param transactionID The transaction to remove.
+     */
+    deleteTransaction(transactionID){
+        var endpoint = "http://127.0.0.1:5000/_api/deleteTransaction";
+        
+        var body = {
+            transactionID: transactionID,
+        }
+
+        var options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                "accessToken": localStorage.getItem("accessToken")
+            },
+            body: JSON.stringify(body)
+        }
+
+        fetch(endpoint, options)
+        .then(res => {
+            console.log(res)
+            return res.json()
+        })
+        .catch((error) => console.log({"Error": error}));;
+    }
+
     updateData(){
         //TO-DO
     }
@@ -240,7 +269,7 @@ class HomePage extends Component{
                 <div className="mainContainer">
                     <div className="trendsDetailedActivity">
                         <Trends className="trends" fetchData={this.fetchData}/>
-                        <DetailedActivity className="detailedActivity" fetchData={this.fetchData} />
+                        <DetailedActivity className="detailedActivity" fetchData={this.fetchData} deleteData={this.deleteTransaction}/>
                     </div>
                     {/* <RecentActivity className="recentActivity"/> */}
 
