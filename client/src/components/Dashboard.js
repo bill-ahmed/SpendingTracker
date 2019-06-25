@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Trends from './dashboard/Trends';
-import AddTransaction from './dashboard/AddTransaction';
+import AddTransaction from './dashboard/modals/AddTransaction';
 import DetailedActivity from './dashboard/DetailedActivity';
 import RecentActivity from './dashboard/RecentActivity';
 import AppBar from '@material-ui/core/AppBar';
@@ -22,7 +22,7 @@ import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
 const fetch = require('node-fetch');
 
-class HomePage extends Component{
+class Dashboard extends Component{
 
     constructor(props){
         super(props);
@@ -36,7 +36,7 @@ class HomePage extends Component{
         this.handleUserMenuClose = this.handleUserMenuClose.bind(this);
         this.handleAddTransactionDialogModalOpen = this.handleAddTransactionDialogModalOpen.bind(this);
         this.handleAddTransactionDialogModalClose = this.handleAddTransactionDialogModalClose.bind(this);
-
+        
         // If userName is not set, sign-out this user
         if(localStorage.getItem("userName") === null){
             this.handleLogOut();
@@ -73,9 +73,11 @@ class HomePage extends Component{
 
         fetch(endpoint, options)
         .then(res => {
-            console.log(res);
+            //console.log(res);
             return res.json()})
-        .then(resp => this.setState({transactionData: resp}))
+        .then(resp => {
+            this.setState({transactionData: resp});
+        })
         .catch((error) => console.log({"Error": error}));
     }
 
@@ -103,19 +105,21 @@ class HomePage extends Component{
             },
             body: JSON.stringify(body)
         }
-        console.log(recordInformation);
+        //console.log(recordInformation);
 
         fetch(endpoint, options)
         .then(res => {
             // If response is good, display success message
             if(res.ok){
-                this.props.enqueueSnackbar("Added Transaction!", {
+                this.props.enqueueSnackbar("Added Transaction! Reloading...", {
                     variant: 'success',
                     preventDuplicate: true,
                     action: (key) => (
                         <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
                     ),
                 });
+                setTimeout(() => window.location.reload(), 2000); // Wait 2 seconds before reloading the page
+                
             } else{
                 this.props.enqueueSnackbar("Unable to add transaction. Please try again later.", {
                     variant: 'error',
@@ -128,7 +132,7 @@ class HomePage extends Component{
 
             console.log({res});
             return res.json()})
-        .then(resp => console.log(resp))
+        .then(resp => console.log())
         .catch((error) => console.log({"Error": error}));
     }
 
@@ -155,10 +159,11 @@ class HomePage extends Component{
 
         fetch(endpoint, options)
         .then(res => {
-            console.log(res)
+            //console.log(res)
             return res.json()
         })
-        .catch((error) => console.log({"Error": error}));;
+        .catch((error) => console.log({"Error": error}));
+        window.location.reload(); // Wait 2 seconds before reloading the page
     }
 
     updateData(){
@@ -268,8 +273,8 @@ class HomePage extends Component{
 
                 <div className="mainContainer">
                     <div className="trendsDetailedActivity">
-                        <Trends className="trends" fetchData={this.fetchData}/>
-                        <DetailedActivity className="detailedActivity" fetchData={this.fetchData} deleteData={this.deleteTransaction}/>
+                        <Trends/>
+                        <DetailedActivity deleteData={this.deleteTransaction}/>
                     </div>
                     {/* <RecentActivity className="recentActivity"/> */}
 
@@ -281,4 +286,4 @@ class HomePage extends Component{
     }
 }
 
-export default withSnackbar(HomePage);
+export default withSnackbar(Dashboard);
