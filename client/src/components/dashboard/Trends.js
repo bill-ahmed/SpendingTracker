@@ -10,21 +10,21 @@ const Chart = require('chart.js');
 
 // Colours to allow in charts
 const BACKGROUND_COLOURS = [
-    'rgba(255, 99, 132, 0.2)',
-    'rgba(54, 162, 235, 0.2)',
-    'rgba(255, 206, 86, 0.2)',
-    'rgba(75, 192, 192, 0.2)',
-    'rgba(153, 102, 255, 0.2)',
-    'rgba(255, 159, 64, 0.2)'
+    'rgba(255, 99, 132, 0.8)',
+    'rgba(54, 162, 235, 0.8)',
+    'rgba(255, 206, 86, 0.8)',
+    'rgba(75, 192, 192, 0.8)',
+    'rgba(153, 102, 255, 0.8)',
+    'rgba(255, 159, 64, 0.8)'
 ]
 
 const BORDER_COLOURS = [
-    'rgba(255, 99, 132, 1)',
-    'rgba(54, 162, 235, 1)',
-    'rgba(255, 206, 86, 1)',
-    'rgba(75, 192, 192, 1)',
-    'rgba(153, 102, 255, 1)',
-    'rgba(255, 159, 64, 1)'
+    'rgba(255, 99, 132, 0.1)',
+    'rgba(54, 162, 235, 0.1)',
+    'rgba(255, 206, 86, 0.1)',
+    'rgba(75, 192, 192, 0.1)',
+    'rgba(153, 102, 255, 0.1)',
+    'rgba(255, 159, 64, 0.1)'
 ]
 
 function Trends() {
@@ -60,8 +60,9 @@ function Trends() {
                     label: chartTitle,
                     data: data,
                     backgroundColor: BACKGROUND_COLOURS,
-                    borderColor: BORDER_COLOURS,
-                    borderWidth: 1.3
+                    borderColor: (graphType === 'line' ? '#1976D2' : BORDER_COLOURS),
+                    borderWidth: 2,
+                    fill: false
                 }]
             },
             options: {
@@ -80,8 +81,8 @@ function Trends() {
     if(transData.amountPerDay != null && isLoading){
         setIsLoading(false);
 
-        createGraphs([["line", "trendsLineGraph", "You Spent:", transData.amountPerDay.dates, transData.amountPerDay.totalExpenses],
-        ["pie", "trendsPieGraph", "Amount Spent Per Location",transData.amountPerLocation.locations, transData.amountPerLocation.amountSpent]]);
+        createGraphs([["line", "trendsLineGraph", "You Spent:", transData.amountPerDay.dates.map(elem => {return elem.substring(0, 16)}), transData.amountPerDay.totalExpenses],
+        ["doughnut", "trendsPieGraph", "Amount Spent Per Location",transData.amountPerLocation.locations, transData.amountPerLocation.amountSpent]]);
     }
 
     return(
