@@ -21,6 +21,7 @@ import './Dashboard.css';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
 const fetch = require('node-fetch');
+const flaskEndpoint = "https://192.168.0.48";
 
 class Dashboard extends Component{
 
@@ -60,7 +61,7 @@ class Dashboard extends Component{
 
     /**GET request to server.js API, response is transaction data */
     fetchData(){
-        var endpoint = "http://127.0.0.1:5000/_api/fetchTransactions";
+        var endpoint = `${flaskEndpoint}/_api/fetchTransactions`;
 
         var options = {
             method: "GET",
@@ -86,7 +87,7 @@ class Dashboard extends Component{
      * @param recordInformation The new record to store.
      */
     createTransaction(recordInformation){
-        var endpoint = "http://127.0.0.1:5000/_api/createTransaction";
+        var endpoint = `${flaskEndpoint}/_api/createTransaction`;
         
         var body = {
             title: recordInformation.title,
@@ -141,7 +142,7 @@ class Dashboard extends Component{
      * @param transactionID The transaction to remove.
      */
     deleteTransaction(transactionID){
-        var endpoint = "http://127.0.0.1:5000/_api/deleteTransaction";
+        var endpoint = `${flaskEndpoint}/_api/deleteTransaction`;
         
         var body = {
             transactionID: transactionID,
