@@ -21,7 +21,7 @@ import './Dashboard.css';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
 const fetch = require('node-fetch');
-const flaskEndpoint = "https://192.168.0.48";
+const flaskEndpoint = "http://127.0.0.1:5000";
 
 class Dashboard extends Component{
 
