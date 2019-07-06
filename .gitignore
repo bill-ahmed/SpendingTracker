@@ -1,3 +1,4 @@
 client/node_modules
 /serviceAccount.json
 /client/src/firebaseAPI_KEY.json
+__pycache__

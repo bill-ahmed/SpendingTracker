@@ -30,7 +30,6 @@ class Dashboard extends Component{
 
         // Bind all functions to "this"
         this.fetchData = this.fetchData.bind(this);
-        this.updateData = this.updateData.bind(this);
         this.createTransaction = this.createTransaction.bind(this);
 
         this.handleUserMenuOpen = this.handleUserMenuOpen.bind(this);
@@ -129,6 +128,7 @@ class Dashboard extends Component{
                         <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
                     ),
                 });
+                console.log(res.json());
             }
 
             console.log({res});
@@ -165,10 +165,6 @@ class Dashboard extends Component{
         })
         .catch((error) => console.log({"Error": error}));
         window.location.reload(); // Wait 2 seconds before reloading the page
-    }
-
-    updateData(){
-        //TO-DO
     }
 
     handleUserMenuOpen(event){
