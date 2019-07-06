@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import { DialogTitle } from '@material-ui/core';
+import Divider from '@material-ui/core/Divider';
+import Paper from '@material-ui/core/Paper';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
-import Button from '@material-ui/core/Button';
 import './LoginPage.css';
 
 const config = require("../../src/firebaseAPI_KEY.json");
@@ -55,9 +59,13 @@ class LoginPage extends Component{
         if(!this.state.isAuth){
             return (
                 <div className="loginContainer">
-                    <h2>Welcome to SpendingTracker!</h2>
-                    <h3>Login below to continue.</h3>
-                    <StyledFirebaseAuth className="loginOptions" uiConfig={this.uiConfig} firebaseAuth={firebase.auth()}/>
+                    <Paper className="loginContent">
+                        <div className="welcomeMessage">
+                            <h2>Welcome!</h2>
+                            <h3>Login or SignUp to continue.</h3>
+                        </div>
+                        <StyledFirebaseAuth className="loginOptions" uiConfig={this.uiConfig} firebaseAuth={firebase.auth()}/>
+                    </Paper>
                 </div>
             )
         }
@@ -75,18 +83,20 @@ class LoginPage extends Component{
 
         return(
             <div className="loginContainer">
-                <h2>Welcome {firebase.auth().currentUser.displayName}!</h2>
-                <br/>
-                <h4>You are signed-in, click Dashboard to continue.</h4>
-                <br/>
-                <br/>
+                <Paper className="loggedInContent">
+                    <h2>Welcome {firebase.auth().currentUser.displayName}!</h2>
+                    <br/>
+                    <h4>You are signed-in, click Dashboard to continue.</h4>
+                    <br/>
+                    <br/>
 
-                <Link to="/dashboard">
-                    <Button variant="contained" color="primary">Dashboard</Button>
-                </Link>
-                <br/>
+                    <Link to="/dashboard">
+                        <Button variant="contained" color="primary">Dashboard</Button>
+                    </Link>
+                    <br/>
 
-                <Button variant="contained" color="default" onClick={() => this.handleLogOut()}>Sign-out</Button>
+                    <Button variant="contained" color="default" onClick={() => this.handleLogOut()}>Sign-out</Button>
+                </Paper>
             </div>
         )
     }

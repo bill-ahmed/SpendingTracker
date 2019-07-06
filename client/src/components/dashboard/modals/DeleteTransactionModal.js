@@ -30,7 +30,6 @@ class DeleteTransactionModal extends Component{
 
                     <Button variant="text" color="secondary" onClick={() => {
                         this.props.deleteMethod();
-                        window.location.reload();
                         }}>
                         DELETE
                     </Button>

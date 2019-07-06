@@ -6,11 +6,20 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { SnackbarProvider } from 'notistack';
 import { Button } from '@material-ui/core';
+/*Redux dependencies */
+import {createStore} from 'redux';
+import {Provider} from 'react-redux';
+import allReducers from './reducers';
+
+const store = createStore(allReducers,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 ReactDOM.render(
 <Router>
     <SnackbarProvider maxSnack={2} anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}>
-        <App />
+        <Provider store={store}>
+            <App />
+        </Provider>
     </SnackbarProvider>
 </Router>, document.getElementById('root'));
 

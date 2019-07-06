@@ -61,7 +61,6 @@ class AddTransaction extends Component{
         if(this.validateData()){
             console.log(this.state);
             this.props.createTransaction(this.state);
-            window.location.reload();
 
         }else{
             // Notify user of the error

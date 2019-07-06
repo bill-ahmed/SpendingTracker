@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Trends from './dashboard/Trends';
-import AddTransaction from './dashboard/AddTransaction';
+import AddTransaction from './dashboard/modals/AddTransaction';
 import DetailedActivity from './dashboard/DetailedActivity';
 import RecentActivity from './dashboard/RecentActivity';
 import AppBar from '@material-ui/core/AppBar';
@@ -21,22 +21,22 @@ import './Dashboard.css';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
 const fetch = require('node-fetch');
+const flaskEndpoint = "http://127.0.0.1:5000";
 
-class HomePage extends Component{
+class Dashboard extends Component{
 
     constructor(props){
         super(props);
 
         // Bind all functions to "this"
         this.fetchData = this.fetchData.bind(this);
-        this.updateData = this.updateData.bind(this);
         this.createTransaction = this.createTransaction.bind(this);
 
         this.handleUserMenuOpen = this.handleUserMenuOpen.bind(this);
         this.handleUserMenuClose = this.handleUserMenuClose.bind(this);
         this.handleAddTransactionDialogModalOpen = this.handleAddTransactionDialogModalOpen.bind(this);
         this.handleAddTransactionDialogModalClose = this.handleAddTransactionDialogModalClose.bind(this);
-
+        
         // If userName is not set, sign-out this user
         if(localStorage.getItem("userName") === null){
             this.handleLogOut();
@@ -60,7 +60,7 @@ class HomePage extends Component{
 
     /**GET request to server.js API, response is transaction data */
     fetchData(){
-        var endpoint = "http://127.0.0.1:5000/_api/fetchTransactions";
+        var endpoint = `${flaskEndpoint}/_api/fetchTransactions`;
 
         var options = {
             method: "GET",
@@ -73,9 +73,11 @@ class HomePage extends Component{
 
         fetch(endpoint, options)
         .then(res => {
-            console.log(res);
+            //console.log(res);
             return res.json()})
-        .then(resp => this.setState({transactionData: resp}))
+        .then(resp => {
+            this.setState({transactionData: resp});
+        })
         .catch((error) => console.log({"Error": error}));
     }
 
@@ -84,7 +86,7 @@ class HomePage extends Component{
      * @param recordInformation The new record to store.
      */
     createTransaction(recordInformation){
-        var endpoint = "http://127.0.0.1:5000/_api/createTransaction";
+        var endpoint = `${flaskEndpoint}/_api/createTransaction`;
         
         var body = {
             title: recordInformation.title,
@@ -103,19 +105,21 @@ class HomePage extends Component{
             },
             body: JSON.stringify(body)
         }
-        console.log(recordInformation);
+        //console.log(recordInformation);
 
         fetch(endpoint, options)
         .then(res => {
             // If response is good, display success message
             if(res.ok){
-                this.props.enqueueSnackbar("Added Transaction!", {
+                this.props.enqueueSnackbar("Added Transaction! Reloading...", {
                     variant: 'success',
                     preventDuplicate: true,
                     action: (key) => (
                         <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
                     ),
                 });
+                setTimeout(() => window.location.reload(), 2000); // Wait 2 seconds before reloading the page
+                
             } else{
                 this.props.enqueueSnackbar("Unable to add transaction. Please try again later.", {
                     variant: 'error',
@@ -124,11 +128,12 @@ class HomePage extends Component{
                         <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
                     ),
                 });
+                console.log(res.json());
             }
 
             console.log({res});
             return res.json()})
-        .then(resp => console.log(resp))
+        .then(resp => console.log())
         .catch((error) => console.log({"Error": error}));
     }
 
@@ -137,7 +142,7 @@ class HomePage extends Component{
      * @param transactionID The transaction to remove.
      */
     deleteTransaction(transactionID){
-        var endpoint = "http://127.0.0.1:5000/_api/deleteTransaction";
+        var endpoint = `${flaskEndpoint}/_api/deleteTransaction`;
         
         var body = {
             transactionID: transactionID,
@@ -155,14 +160,11 @@ class HomePage extends Component{
 
         fetch(endpoint, options)
         .then(res => {
-            console.log(res)
+            //console.log(res)
             return res.json()
         })
-        .catch((error) => console.log({"Error": error}));;
-    }
-
-    updateData(){
-        //TO-DO
+        .catch((error) => console.log({"Error": error}));
+        window.location.reload(); // Wait 2 seconds before reloading the page
     }
 
     handleUserMenuOpen(event){
@@ -268,8 +270,8 @@ class HomePage extends Component{
 
                 <div className="mainContainer">
                     <div className="trendsDetailedActivity">
-                        <Trends className="trends" fetchData={this.fetchData}/>
-                        <DetailedActivity className="detailedActivity" fetchData={this.fetchData} deleteData={this.deleteTransaction}/>
+                        <Trends/>
+                        <DetailedActivity deleteData={this.deleteTransaction}/>
                     </div>
                     {/* <RecentActivity className="recentActivity"/> */}
 
@@ -281,4 +283,4 @@ class HomePage extends Component{
     }
 }
 
-export default withSnackbar(HomePage);
+export default withSnackbar(Dashboard);
