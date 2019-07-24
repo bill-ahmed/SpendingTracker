@@ -63,7 +63,9 @@ class LoginPage extends Component{
                         <div className="welcomeMessage">
                             <h2>Welcome!</h2>
                             <h3>Login or SignUp to continue.</h3>
+                            
                         </div>
+                        <Divider variant="middle" width="90%"/>
                         <StyledFirebaseAuth className="loginOptions" uiConfig={this.uiConfig} firebaseAuth={firebase.auth()}/>
                     </Paper>
                 </div>
@@ -86,7 +88,7 @@ class LoginPage extends Component{
                 <Paper className="loggedInContent">
                     <h2>Welcome {firebase.auth().currentUser.displayName}!</h2>
                     <br/>
-                    <h4>You are signed-in, click Dashboard to continue.</h4>
+                    <h4>Click Dashboard to continue.</h4>
                     <br/>
                     <br/>
 
