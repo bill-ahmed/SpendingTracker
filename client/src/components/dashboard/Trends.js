@@ -60,9 +60,9 @@ function Trends() {
                     label: chartTitle,
                     data: data,
                     backgroundColor: BACKGROUND_COLOURS,
-                    borderColor: (graphType === 'line' ? '#1976D2' : BORDER_COLOURS),
+                    borderColor: (graphType === 'line' ? '' : BORDER_COLOURS),
                     borderWidth: 2,
-                    fill: false
+                    fill: (graphType === "line" ? true : false)
                 }]
             },
             options: {
@@ -76,7 +76,7 @@ function Trends() {
             }
         });
     }
-
+    //#1976D2
     const transData = useSelector(state => state.transactionData);
     if(transData.amountPerDay != null && isLoading){
         setIsLoading(false);

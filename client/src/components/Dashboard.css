@@ -13,40 +13,55 @@
 
 .dashboard .mainContainer{
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    
+    margin: 2% auto auto auto;
 
-    margin-top: 3%;
-    /* width: 100%;
-    height: 100%; */
+    width: 100%;
+    height: 100%;
 }
 
-.dashboard .mainContainer .trendsDetailedActivity{
-    order: 2;
+.dashboard .mainContainer .leftPane{
     display: flex;
     flex-direction: column;
     justify-content: space-around;
 
-    width: 90%;
+    width: 40%;
+    height: 50%;
     min-width: 300px;
 }
 
-.dashboard .mainContainer .trendsDetailedActivity .trends{
-    margin-bottom: 5%;
+.dashboard .mainContainer .leftPane .trends{
+    width: 100%;
+    margin: 2%;
 }
 
-.dashboard .mainContainer .trendsDetailedActivity .detailedActivity{
-    min-width: 350px;
-    width: 80%;
+.dashboard .mainContainer .rightPane{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    width: 60%;
+    min-width: 300px;
+}
+
+.dashboard .mainContainer .rightPane .summary{
     align-self: center;
+    flex-grow: 1;
+    width: 90%;
+
+    margin: 2%;
 }
 
-.dashboard .mainContainer .recentActivity{
-    order: 1;
-    margin: 15px;
-    min-width: 300px;
-    width: 20%;
+.dashboard .mainContainer .rightPane .detailedActivity{
+    min-width: 350px;
+    width: 90%;
+    height: 50%;
+    align-self: center;
+
+    margin: 0% 2% 2% 2%;
 }
 
 .dashboard .heading{

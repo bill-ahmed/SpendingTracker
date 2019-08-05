@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import Trends from './dashboard/Trends';
 import AddTransaction from './dashboard/modals/AddTransaction';
 import DetailedActivity from './dashboard/DetailedActivity';
+import Summary from './dashboard/Summary';
 import RecentActivity from './dashboard/RecentActivity';
+import AddIcon from '@material-ui/icons/Add';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
+import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -15,6 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import firebase from 'firebase';
 import { withSnackbar } from 'notistack';
 import './Dashboard.css';
@@ -22,6 +27,17 @@ import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
 const fetch = require('node-fetch');
 const flaskEndpoint = "http://127.0.0.1:5000";
+
+// In-line styles applied to material-ui elements
+const styles = theme => ({
+    AppBar: {
+      backgroundColor: '#1EB350',
+    },
+    fab: {
+        marginLeft: '15px',
+        marginRight: '15px',
+    }
+  });
 
 class Dashboard extends Component{
 
@@ -210,6 +226,7 @@ class Dashboard extends Component{
     render(){
         // Determine if the user menu is open or not
         const {anchorEl} = this.state.userMenuOpen;
+        const { classes } = this.props;
         const open = Boolean(anchorEl);
         const userPhoto = localStorage.getItem("userPhoto");
         const userDefaultPhoto = require("./assets/default_profile_pic.png");
@@ -217,7 +234,7 @@ class Dashboard extends Component{
         return(
             <div className="dashboard">
                 {/* Dashboard located in the header; controls main navigation */}
-                <AppBar position="static" color="default">
+                <AppBar position="static" color="default" classes={{colorPrimary: classes.AppBar}}>
                     <Toolbar>
                         <div className="heading">
                             Dashboard
@@ -227,13 +244,20 @@ class Dashboard extends Component{
                             Home
                         </Button>
 
-                        <Button variant="text" color="inherit" onClick={() => this.fetchData()}>
+                        {/* <Button variant="text" color="inherit" onClick={() => this.fetchData()}>
                             Get Data
-                        </Button>
+                        </Button> */}
 
-                        <Button variant="text" color="inherit" onClick={() => this.handleAddTransactionDialogModalOpen()}>
-                            Add Data
-                        </Button>
+                        {/* <Button variant="text" color="inherit" onClick={() => this.handleAddTransactionDialogModalOpen()}>
+                            Add Transaction
+                        </Button> */}
+                        
+                        {/* Add transaction buttom */}
+                        <Tooltip title="Add" aria-label="Add a transaction" className={classes.fab}>
+                            <Fab size="medium" color="secondary" aria-label="Add a transaction" onClick={() => this.handleAddTransactionDialogModalOpen()}>
+                                <AddIcon/>
+                            </Fab>
+                        </Tooltip>
 
                         <IconButton variant="text" onClick={this.handleUserMenuOpen} color="inherit">
                             <Avatar src={userPhoto === "null" ? userDefaultPhoto : userPhoto}/>
@@ -269,10 +293,15 @@ class Dashboard extends Component{
                 </Menu>
 
                 <div className="mainContainer">
-                    <div className="trendsDetailedActivity">
-                        <Trends/>
-                        <DetailedActivity deleteData={this.deleteTransaction}/>
+                    <div className="leftPane">
+                        <Trends className="trends"/>
                     </div>
+
+                    <div className="rightPane">
+                        <Summary className="summary"/>
+                        <DetailedActivity className="detailedActivity" deleteData={this.deleteTransaction}/>
+                    </div>
+
                     {/* <RecentActivity className="recentActivity"/> */}
 
                     {this.state.addTransactionDialogOpen &&
@@ -283,4 +312,4 @@ class Dashboard extends Component{
     }
 }
 
-export default withSnackbar(Dashboard);
+export default withSnackbar(withStyles(styles)(Dashboard));
