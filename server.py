@@ -18,9 +18,7 @@ try:
     if os.environ['ENV'] == 'dev':
         cred = credentials.Certificate('./serviceAccount.json')
 except:
-    # If we're in production, get service account info from heroku's config vars
-    credLocation = os.environ.get("serviceAccount", None)
-    cred = credentials.Certificate(credLocation)
+    cred = credentials.Certificate('/etc/secrets/serviceAccount.json')
 
 
 '''*** Initialize connection to Firebase databse (firestore) ***'''
