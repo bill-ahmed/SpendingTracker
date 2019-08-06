@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {setTransactionData} from '../actions';
 
 const fetch = require('node-fetch');
-const flaskEndpoint = "http://127.0.0.1:5000";
+const flaskEndpoint = "https://api.billahmed.com/";
 
 /**GET request to server.js API, store response in redux STORE */
 function FetchData() {
