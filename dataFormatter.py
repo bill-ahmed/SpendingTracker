@@ -1,9 +1,9 @@
 import datetime
 
-'''* Validate the user data such as title, date, etc.
+def validateDate(data: dict):
+    ''' Validate the user data such as title, date, etc.\n
     (dict) -> bool
-'''
-def validateDate(data):
+    '''
     if((data['title'].strip() == '')):
         return False
     
@@ -25,16 +25,17 @@ def validateDate(data):
     return True
 
 
-'''* Format a string date into a datetime object. The date must be in the format "MM-DD-YYYY"
+def formatDate(date: str):
+    ''' Format a string date into a datetime object. The date must be in the format "MM-DD-YYYY"\n
     (str) -> datetime
-'''
-def formatDate(date):
+    '''
     return (datetime.datetime(int(date[0:4]), int(date[5:7]), int(date[8:])))
 
-'''* Format the data recieved from Firestore into a more usable format *
-    * (dict) => dict
-'''
-def formatTransactionRecords(docs):
+
+def formatTransactionRecords(docs: dict):
+    '''Format the data recieved from Firestore into a more usable format\n
+    (dict) => dict
+    ''' 
     resp = {}
     resp["amountPerLocation"] = dict()
     resp["amountPerDay"] = dict()
