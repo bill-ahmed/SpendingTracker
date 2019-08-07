@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import FetchData from '../../api'; 
-import './DetailedActivity.css'
+import './css/DetailedActivity.css'
 // Redux component
 import {useSelector} from 'react-redux';
 

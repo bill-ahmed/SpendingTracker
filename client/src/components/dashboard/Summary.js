@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import FetchData from '../../api'; 
-import './Summary.css'
+import './css/Summary.css'
 
 // Redux component
 import {useSelector} from 'react-redux';

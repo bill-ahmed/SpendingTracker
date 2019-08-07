@@ -5,7 +5,7 @@ import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
-import './AddTransaction.css';
+import './css/AddTransaction.css';
 
 class AddTransaction extends Component{
     constructor(props){

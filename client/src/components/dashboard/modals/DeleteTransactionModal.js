@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import './DeleteTransactionModal.css';
+import './css/DeleteTransactionModal.css';
 
 class DeleteTransactionModal extends Component{
     render() {

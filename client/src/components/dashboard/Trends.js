@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import './Trends.css'
+import './css/Trends.css'
 // Redux component
 import {useSelector} from 'react-redux';
 

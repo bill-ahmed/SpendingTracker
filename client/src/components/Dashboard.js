@@ -22,7 +22,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import firebase from 'firebase';
 import { withSnackbar } from 'notistack';
-import './Dashboard.css';
+import './css/Dashboard.css';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
 const fetch = require('node-fetch');
