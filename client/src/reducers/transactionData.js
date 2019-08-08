@@ -4,6 +4,8 @@ const transactionDataReducer = (state = {}, action) => {
             return state;
         case "SET_DATA":
             return action.payload;
+        case "IS_MOBILE_USER":
+            return state;
         default:
             return state;
     }
