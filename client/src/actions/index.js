@@ -17,3 +17,10 @@ export const isMobileUser = (userIsOnMobileDevice) => {
         payload: userIsOnMobileDevice
     };
 };
+
+export const setOfflineStatus = (offlineStatus) => {
+    return {
+        type: "IS_USER_OFFLINE",
+        payload: offlineStatus
+    };
+};

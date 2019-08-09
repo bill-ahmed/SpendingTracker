@@ -76,12 +76,12 @@ function Trends() {
             }
         });
     }
-    //#1976D2
+
     const transData = useSelector(state => state.transactionData);
     if(transData.amountPerMetric != null && isLoading){
         setIsLoading(false);
 
-        createGraphs([["line", "trendsLineGraph", "You Spent:", transData.amountPerMetric.dates.map(elem => {return elem.substring(0, 11)}), transData.amountPerMetric.totalExpenses],
+        createGraphs([["line", "trendsLineGraph", "You Spent", transData.amountPerMetric.dates.map(elem => {return elem.substring(0, 11)}), transData.amountPerMetric.totalExpenses],
         ["doughnut", "trendsPieGraph", "Amount Spent Per Location",transData.amountPerMetric.amountPerLocation.locations, transData.amountPerMetric.amountPerLocation.amountSpent]]);
     }
 

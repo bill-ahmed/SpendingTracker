@@ -129,11 +129,13 @@ class Dashboard extends Component{
                 setTimeout(() => window.location.reload(), 2000); // Wait 2 seconds before reloading the page
                 
             } else{
-                this.handleResponse("error", "Unable to add transaction. Please try again later.", res.status);
+                this.handleResponse("error", "Unable to add transaction. Please try again later.", res.status, true);
                 console.log(res.json());
             }})
         .then(resp => console.log())
-        .catch((error) => console.log({"Error": error}));
+        .catch((error) => {
+            this.handleResponse("error", "Unable to add transaction. Please try again later.", 500, true);
+            console.log({"Error": error})});
     }
 
     /**POST request to delete and existing transaction
@@ -176,14 +178,15 @@ class Dashboard extends Component{
      * @param success (bool) true iff the reponse was a success, false otherwise
      * @param message (str) The message to display in snackbar
      * @param errCode (int) The error code returned by server, if applicable
+     * @param showButton (bool) If true, a button to dismiss the snakcbar will appear
      */
-    handleResponse(repVariant, message, errCode){
+    handleResponse(repVariant, message, errCode, showButton){
         // Enqueue a snackbar
         this.props.enqueueSnackbar(message, {
             variant: repVariant,
             preventDuplicate: true,
             action: (key) => (
-                <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
+                showButton && <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
             ),
         });
     }

@@ -10,8 +10,10 @@ function GetUserInfo(){
 
     if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent) ) {
         dispatch(isMobileUser(true));   // Set value of isMobileUser to true in redux store
+        localStorage.setItem("isMobileUser", true);
         return;
     }
+    localStorage.setItem("isMobileUser", false);
     dispatch(isMobileUser(false));
 }
 

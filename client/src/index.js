@@ -11,12 +11,16 @@ import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import allReducers from './reducers';
 
+// Redux state management
 const store = createStore(allReducers,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
+
+
 ReactDOM.render(
 <Router>
-    <SnackbarProvider maxSnack={2} anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}>
+    <SnackbarProvider dense={localStorage.getItem("isMobileUser") === "true" ? true : false} 
+    maxSnack={2} anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}>
         <Provider store={store}>
             <App />
         </Provider>

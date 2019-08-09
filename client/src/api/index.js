@@ -1,6 +1,6 @@
 // Redux components
 import {useDispatch} from 'react-redux';
-import {setTransactionData} from '../actions';
+import {setTransactionData, setOfflineStatus} from '../actions';
 
 const fetch = require('node-fetch');
 // const flaskEndpoint = "https://api.billahmed.com/";
@@ -10,9 +10,8 @@ const flaskEndpoint = "http://127.0.0.1:5000";
  * @param successFunc The function to execute when data is successfully retrieved. Takes in parameters: 
  * (key, value), where value is response data
  * @param key The key to pass into the function
- * @param errFunc A function to execute when error occurs
  */
-function FetchData(successFunc, key, errFunc) {
+function FetchData(successFunc, key) {
     const dispatch = useDispatch();
 
     var endpoint = `${flaskEndpoint}/_api/fetchTransactions`;
@@ -39,11 +38,13 @@ function FetchData(successFunc, key, errFunc) {
         // Update out STORE with this transaction data
         resp = mapDateToAmount(resp);
         dispatch(setTransactionData(resp));
-
+        // dispatch(setOfflineStatus(false));
         // Run success function
         successFunc(key, resp);
     })
-    .catch((error) => {errFunc()});
+    .catch((error) => {
+        dispatch(setOfflineStatus(true));
+    });
 }
 
 /**Given the raw data from firebase, map all the dates to the amount spent each day

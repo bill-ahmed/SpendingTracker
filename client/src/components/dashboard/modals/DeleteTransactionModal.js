@@ -41,7 +41,7 @@ class DeleteTransactionModal extends Component{
                 </DialogContent>
 
                 <DialogActions>
-                    <Button variant="text" color="inherit" onClick={() => this.props.handleDeleteModalClose()}>
+                    <Button disabled={disabled} variant="text" color="inherit" onClick={() => this.props.handleDeleteModalClose()}>
                         Cancel
                     </Button>
 

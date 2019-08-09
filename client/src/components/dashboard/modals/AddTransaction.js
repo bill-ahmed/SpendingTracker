@@ -162,7 +162,7 @@ class AddTransaction extends Component{
 
                 {/*Add and Close buttons */}
                 <DialogActions>
-                    <Button variant="text" color="inherit" onClick={() => this.props.handleAddTransactionDialogModalClose()}>
+                    <Button disabled={loading} variant="text" color="inherit" onClick={() => this.props.handleAddTransactionDialogModalClose()}>
                         Cancel
                     </Button>
 
