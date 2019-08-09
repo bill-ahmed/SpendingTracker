@@ -1,5 +1,5 @@
 // Redux components
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {setTransactionData} from '../actions';
 
 const fetch = require('node-fetch');
@@ -7,9 +7,12 @@ const fetch = require('node-fetch');
 const flaskEndpoint = "http://127.0.0.1:5000";
 
 /**GET request to server.js API, store response in redux STORE
+ * @param successFunc The function to execute when data is successfully retrieved. Takes in parameters: 
+ * (key, value), where value is response data
+ * @param key The key to pass into the function
  * @param errFunc A function to execute when error occurs
  */
-function FetchData(errFunc) {
+function FetchData(successFunc, key, errFunc) {
     const dispatch = useDispatch();
 
     var endpoint = `${flaskEndpoint}/_api/fetchTransactions`;
@@ -36,6 +39,9 @@ function FetchData(errFunc) {
         // Update out STORE with this transaction data
         resp = mapDateToAmount(resp);
         dispatch(setTransactionData(resp));
+
+        // Run success function
+        successFunc(key, resp);
     })
     .catch((error) => {errFunc()});
 }

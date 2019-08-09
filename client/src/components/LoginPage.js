@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Switch, Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import { DialogTitle } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';

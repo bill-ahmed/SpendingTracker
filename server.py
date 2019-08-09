@@ -152,7 +152,6 @@ def deleteTransaction():
 
     # Transaction ID in the form of a dictionary
     transactionID = request.get_json()
-    print("Removing transaction with ID:", transactionID['transactionID'])
 
     # Clear entry for user with UID uid from memory
     if(uid in USER_INFO):
@@ -160,6 +159,7 @@ def deleteTransaction():
         print("Removed user with UID", uid, "from memory.")
 
     # If transaction exists with id, delete it. Otherwise, this line does nothing
+    print("Removing transaction with ID:", transactionID['transactionID'])
     db.collection(u'users').document(uid).collection(u'records').document(transactionID['transactionID']).delete()
 
     time.sleep(2)   # Sleep for a few seconds to allow Firebase to commmit changes
