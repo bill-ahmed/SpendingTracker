@@ -1,16 +1,33 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import './css/DeleteTransactionModal.css';
 
 class DeleteTransactionModal extends Component{
+    constructor(props){
+        super(props);
+
+        this.state = {
+            isDisabled: false,
+            isLoading: false
+        }
+    }
+
+    handleDeleteClick(){
+        this.props.deleteMethod();
+        this.setState({isDisabled: true});
+        this.setState({isLoading: true});
+    }
+
     render() {
         let transactionInfo = this.props.transactionInfo;
-
+        let disabled = this.state.isDisabled;
+        let loading = this.state.isLoading;
         return(
-            <Dialog open fullWidth>
+            <Dialog open fullWidth className="deleteTransactionModal">
                 <DialogTitle>
                     Are you sure?
                 </DialogTitle>
@@ -28,9 +45,8 @@ class DeleteTransactionModal extends Component{
                         Cancel
                     </Button>
 
-                    <Button variant="text" color="secondary" onClick={() => {
-                        this.props.deleteMethod();
-                        }}>
+                    <Button disabled={disabled} variant="contained" color="secondary" onClick={() => this.handleDeleteClick()}>
+                        {loading && <CircularProgress size={30} id="loadingTransactionDeletion"/>}
                         DELETE
                     </Button>
                 </DialogActions>

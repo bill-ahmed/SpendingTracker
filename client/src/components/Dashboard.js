@@ -162,14 +162,12 @@ class Dashboard extends Component{
             //console.log(res)
             // If we weren't able to delete a record, notify user
             if(res.ok){
-                
-                this.handleResponse("success", "Deleted record, reloading...", res.status);
+
                 setTimeout(() => window.location.reload(), 2000); // Wait 2 seconds before reloading the page
 
             } else{
-                
-                this.handleResponse("error", "Error while trying to delete record, please try again later. Reloading...", res.status);
-                console.log(res.json());
+                console.log({"Error" : res.json()});
+                //setTimeout(() => window.location.reload(), 2000); // Wait 2 seconds before reloading the page
             }})
         .catch((error) => console.log({"Error": error}));
     }
