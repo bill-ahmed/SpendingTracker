@@ -45,18 +45,18 @@ function FetchData(errFunc) {
  * @returns A modified response that includes a mapping of each data to the amount spent
  */
 function mapDateToAmount(rawData){
-    let dates = rawData.amountPerDay.dates;
-    let amounts = rawData.amountPerDay.totalExpenses;
+    let dates = rawData.amountPerMetric.dates;
+    let amounts = rawData.amountPerMetric.totalExpenses;
 
     // Add new field for amount spent per day
-    let newAmountPerDay = {};
+    let amountPerDay = {};
 
     for(let i=0; i < dates.length; i++){
-        newAmountPerDay[formatDate(dates[i])] = amounts[i];
+        amountPerDay[formatDate(dates[i])] = amounts[i];
     }
 
     // Add a new field that maps each day to the amount spent on that day
-    rawData.amountPerDay.newAmountPerDay = newAmountPerDay;
+    rawData.amountPerMetric.amountPerDay = amountPerDay;
     return rawData;
 
 }
