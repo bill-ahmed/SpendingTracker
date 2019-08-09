@@ -47,7 +47,7 @@ def fetchTransactions():
     if(not isAuth[0]):
         # If verification fails, return error message
         response = jsonify({"ErrorMessage": "Invalid Access Token"})
-        response.status_code = 400
+        response.status_code = 401
         return response
 
     decoded_token = isAuth[1]
@@ -92,7 +92,7 @@ def createTransaction():
     if(not isAuth[0]):
         # If verification fails, return error message
         response = jsonify({"ErrorMessage": "Invalid Access Token"})
-        response.status_code = 400
+        response.status_code = 401
         return response
 
     # Retrieve user's UID
@@ -143,7 +143,7 @@ def deleteTransaction():
     if(not isAuth[0]):
         # If verification fails, return error message
         response = jsonify({"ErrorMessage": "Invalid Access Token"})
-        response.status_code = 400
+        response.status_code = 401
         return response
 
     # Retrieve user's UID

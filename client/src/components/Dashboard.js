@@ -208,19 +208,20 @@ class Dashboard extends Component{
 
     /**Logout the current user via firebase.auth, and other house-keeping items */
     handleLogOut(){
-        localStorage.removeItem("userName");
-        localStorage.removeItem("userPhoto");
-        localStorage.removeItem("accessToken");
-        firebase.auth().signOut()
-        .then(() => {
-            // Take user to home screen
-            window.location.href = "/";
+        this.props.handleLogOut();
+        // localStorage.removeItem("userName");
+        // localStorage.removeItem("userPhoto");
+        // localStorage.removeItem("accessToken");
+        // firebase.auth().signOut()
+        // .then(() => {
+        //     // Take user to home screen
+        //     window.location.href = "/";
 
-        })
-        .catch((err) => {
-            console.log(err);
-            alert("Error when trying to logout. Check console log for details");
-        });
+        // })
+        // .catch((err) => {
+        //     console.log(err);
+        //     alert("Error when trying to logout. Check console log for details");
+        // });
         
     }
 

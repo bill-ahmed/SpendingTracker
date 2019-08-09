@@ -6,8 +6,10 @@ const fetch = require('node-fetch');
 // const flaskEndpoint = "https://api.billahmed.com/";
 const flaskEndpoint = "http://127.0.0.1:5000";
 
-/**GET request to server.js API, store response in redux STORE */
-function FetchData() {
+/**GET request to server.js API, store response in redux STORE
+ * @param errFunc A function to execute when error occurs
+ */
+function FetchData(errFunc) {
     const dispatch = useDispatch();
 
     var endpoint = `${flaskEndpoint}/_api/fetchTransactions`;
@@ -23,14 +25,19 @@ function FetchData() {
 
     fetch(endpoint, options)
     .then(res => {
-        console.log(res);
+
+        // If user is not given a type of error message, throw the appropriate status code
+        if(res.status >= 400){
+            throw res.status;
+        }
         return res.json()})
     .then(resp => {
+
         // Update out STORE with this transaction data
         resp = mapDateToAmount(resp);
         dispatch(setTransactionData(resp));
     })
-    .catch((error) => console.log({"Error": error}));
+    .catch((error) => {errFunc()});
 }
 
 /**Given the raw data from firebase, map all the dates to the amount spent each day
