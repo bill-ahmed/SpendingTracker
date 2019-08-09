@@ -26,17 +26,15 @@
 .dashboard .mainContainer .leftPane{
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
 
-    width: 40%;
-    height: 50%;
-    min-width: 300px;
+    width: calc(25vw + 200px);
 }
 
-.dashboard .mainContainer .leftPane .trends{
+/* .dashboard .mainContainer .leftPane .trends{
     width: 100%;
     margin: 2%;
-}
+} */
 
 .dashboard .mainContainer .rightPane{
     display: flex;
@@ -47,24 +45,27 @@
     min-width: 300px;
 }
 
-.dashboard .mainContainer .rightPane .summary{
-    align-self: center;
-    flex-grow: 1;
-    width: 90%;
-
-    margin: 2%;
-}
-
-.dashboard .mainContainer .rightPane .detailedActivity{
-    min-width: 350px;
-    width: 90%;
-    height: 50%;
-    align-self: center;
-
-    margin: 0% 2% 2% 2%;
-}
-
 .dashboard .heading{
     flex-grow: 1;
     font-size: 25px;
+}
+
+/*Mobile devices only: hide detailed activity section*/
+@media only screen and (max-width: 1137px){
+    .rightPane{
+        order: 1;
+    }
+
+    .leftPane{
+        order: 2;
+    }
+}
+
+/*Mobile devices only: hide detailed activity section*/
+@media only screen and (max-width: 1333px){
+
+
+    .leftPane{
+        width: calc(30vw + 200px);
+    }
 }
