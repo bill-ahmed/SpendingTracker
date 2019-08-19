@@ -34,7 +34,7 @@ export function DashboardContainer(props) {
         // Add cached data to redux store
         dispatch(setTransactionData(tempTransactionData));
 
-        let message = "Attempting to reconnect to server...please ensure you have network access."
+        let message = "Lost connection to the server...try refreshing the page."
         // Notify user of offline mode
         enqueueSnackbar(message, {
             variant: 'info',
@@ -49,8 +49,8 @@ export function DashboardContainer(props) {
     );
 }
 
-/**** Various helper functions for the app ****/
 
+/**** Various helper functions for the app ****/
 
 /**Given some data, add it to the cache with the specified key
  * @param key (str) The key to use when setting this value

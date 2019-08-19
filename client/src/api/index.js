@@ -1,9 +1,10 @@
 // Redux components
 import {useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {setTransactionData, setOfflineStatus} from '../actions';
 
 const fetch = require('node-fetch');
-// const flaskEndpoint = "https://api.billahmed.com/";
+// const flaskEndpoint = "https://spendingtracker.billahmed.com";
 const flaskEndpoint = "http://127.0.0.1:5000";
 
 /**GET request to server.js API, store response in redux STORE
@@ -13,6 +14,8 @@ const flaskEndpoint = "http://127.0.0.1:5000";
  */
 function FetchData(successFunc, key) {
     const dispatch = useDispatch();
+    // Check if we are in offline mode
+    const connectivityInfo = useSelector(state => state.UserConnectivity);
 
     var endpoint = `${flaskEndpoint}/_api/fetchTransactions`;
 
@@ -43,7 +46,11 @@ function FetchData(successFunc, key) {
         successFunc(key, resp);
     })
     .catch((error) => {
-        dispatch(setOfflineStatus(true));
+        if(connectivityInfo.isUserOffline){
+            // Do nothing
+        } else{
+            dispatch(setOfflineStatus(true));
+        }
     });
 }
 
