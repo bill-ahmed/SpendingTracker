@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^3.9.3",
+    "@material-ui/core": "^4.0.0",
     "@material-ui/icons": "^3.0.2",
+    "@material-ui/lab": "^4.0.0-alpha.23",
     "@material-ui/pickers": "^3.1.0",
     "chart.js": "^2.8.0",
     "firebase": "^5.11.1",

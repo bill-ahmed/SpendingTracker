@@ -4,6 +4,7 @@ import Trends from './dashboard/Trends';
 import AddTransaction from './dashboard/modals/AddTransaction';
 import DetailedActivity from './dashboard/DetailedActivity';
 import Summary from './dashboard/Summary';
+import QuickActions from './dashboard/QuickActions';
 import AddIcon from '@material-ui/icons/Add';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -54,13 +55,6 @@ class Dashboard extends Component{
         if(localStorage.getItem("userName") === null){
             this.handleLogOut();
         }
-
-        // Retrieve name of user currently signed-in
-        // try{
-        //     var userName = firebase.auth().currentUser.displayName.split(" ")
-        // } catch{
-        //     this.handleLogOut();
-        // }
 
         this.state = {
             userMenuOpen: {anchorEl: null},
@@ -216,20 +210,6 @@ class Dashboard extends Component{
     /**Logout the current user via firebase.auth, and other house-keeping items */
     handleLogOut(){
         this.props.handleLogOut();
-        // localStorage.removeItem("userName");
-        // localStorage.removeItem("userPhoto");
-        // localStorage.removeItem("accessToken");
-        // firebase.auth().signOut()
-        // .then(() => {
-        //     // Take user to home screen
-        //     window.location.href = "/";
-
-        // })
-        // .catch((err) => {
-        //     console.log(err);
-        //     alert("Error when trying to logout. Check console log for details");
-        // });
-        
     }
 
     render(){
@@ -249,6 +229,8 @@ class Dashboard extends Component{
                             Dashboard
                         </div>
 
+                        <QuickActions className={classes.fab} handleSingleTransaction={this.handleAddTransactionDialogModalOpen}/>
+                        
                         <Button variant="text" color="inherit" onClick={() => window.location.href = "/"}>
                             Home
                         </Button>
@@ -261,12 +243,13 @@ class Dashboard extends Component{
                             Add Transaction
                         </Button> */}
                         
-                        {/* Add transaction buttom */}
-                        <Tooltip title="Add" aria-label="Add a transaction" className={classes.fab}>
+                        {/* Add transaction button */}
+                        
+                        {/* <Tooltip title="Add" aria-label="Add a transaction" className={classes.fab}>
                             <Fab size="medium" color="secondary" aria-label="Add a transaction" onClick={() => this.handleAddTransactionDialogModalOpen()}>
                                 <AddIcon/>
                             </Fab>
-                        </Tooltip>
+                        </Tooltip> */}
 
                         <IconButton variant="text" onClick={this.handleUserMenuOpen} color="inherit">
                             <Avatar src={userPhoto === "null" ? userDefaultPhoto : userPhoto}/>
