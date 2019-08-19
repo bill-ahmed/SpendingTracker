@@ -34,7 +34,7 @@ export function DashboardContainer(props) {
         // Add cached data to redux store
         dispatch(setTransactionData(tempTransactionData));
 
-        let message = "Lost connection to the server...try refreshing the page."
+        let message = "Lost connection to the server...try logging out and back in."
         // Notify user of offline mode
         enqueueSnackbar(message, {
             variant: 'info',
@@ -59,7 +59,7 @@ export function DashboardContainer(props) {
 function setCache(key, value){
 
     let itemToCache = JSON.stringify(value)
-    console.log(itemToCache);
+    console.log("Updated cache with transaction data.");
     localStorage.setItem(key, itemToCache);   // Add to local storage
 }
 
