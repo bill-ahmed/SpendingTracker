@@ -67,7 +67,6 @@ function DetailedActivity(props) {
 
     // If we have transaction data in the redux STORE
     if(transactionData.raw_data != null){ // ONE "=" sign is super important here!
-        console.log({"TRANSACTOIN DATA NOT NULL": transactionData.raw_data})
         tableData = transactionData.raw_data;
     }
 

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Trends from './dashboard/Trends';
 import AddTransaction from './dashboard/modals/AddTransaction';
+import BulkUpload from './dashboard/modals/BulkUpload';
 import DetailedActivity from './dashboard/DetailedActivity';
 import Summary from './dashboard/Summary';
 import QuickActions from './dashboard/QuickActions';
@@ -50,7 +51,9 @@ class Dashboard extends Component{
         this.handleUserMenuClose = this.handleUserMenuClose.bind(this);
         this.handleAddTransactionDialogModalOpen = this.handleAddTransactionDialogModalOpen.bind(this);
         this.handleAddTransactionDialogModalClose = this.handleAddTransactionDialogModalClose.bind(this);
-        
+        this.handleBulkUploadDialogModalOpen = this.handleBulkUploadDialogModalOpen.bind(this);
+        this.handleBulkUploadDialogModalClose = this.handleBulkUploadDialogModalClose.bind(this);
+
         // If userName is not set, sign-out this user
         if(localStorage.getItem("userName") === null){
             this.handleLogOut();
@@ -62,6 +65,7 @@ class Dashboard extends Component{
             userName: localStorage.getItem("userName").split(" "),
             transactionData: {},
             addTransactionDialogOpen: false,
+            bulkUploadDialogOpen: false,
         }
     }
 
@@ -207,6 +211,14 @@ class Dashboard extends Component{
         this.setState({addTransactionDialogOpen: false});
     }
 
+    handleBulkUploadDialogModalOpen(){
+        this.setState({bulkUploadDialogOpen: true});
+    }
+    
+    handleBulkUploadDialogModalClose(){
+        this.setState({bulkUploadDialogOpen: false});
+    }
+
     /**Logout the current user via firebase.auth, and other house-keeping items */
     handleLogOut(){
         this.props.handleLogOut();
@@ -229,7 +241,8 @@ class Dashboard extends Component{
                             Dashboard
                         </div>
 
-                        <QuickActions className={classes.fab} handleSingleTransaction={this.handleAddTransactionDialogModalOpen}/>
+                        <QuickActions className={classes.fab} 
+                        handleSingleTransaction={this.handleAddTransactionDialogModalOpen} handleBulkTransaction={this.handleBulkUploadDialogModalOpen}/>
                         
                         <Button variant="text" color="inherit" onClick={() => window.location.href = "/"}>
                             Home
@@ -294,10 +307,11 @@ class Dashboard extends Component{
                         <DetailedActivity className="detailedActivity" deleteData={this.deleteTransaction}/>
                     </div>
 
-                    {/* <RecentActivity className="recentActivity"/> */}
-
+                    {/* Pop-up modals to allow adding transactions */}
                     {this.state.addTransactionDialogOpen &&
                     <AddTransaction handleAddTransactionDialogModalClose={this.handleAddTransactionDialogModalClose} createTransaction={this.createTransaction}/>}
+
+                    {this.state.bulkUploadDialogOpen && <BulkUpload handleBulkUploadDialogModalClose={this.handleBulkUploadDialogModalClose}/>}
                 </div>
             </div>
         );

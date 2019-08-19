@@ -26,7 +26,8 @@ function QuickActions(props){
             <SpeedDialAction key="Add Single Transaction" tooltipTitle="Single Transaction" icon={<CreateIcon/>} tooltipPlacement="bottom"
             onClick={props.handleSingleTransaction}/>
 
-            <SpeedDialAction key="Bulk Upload" tooltipTitle="Bulk Upload" icon={<AttachmentIcon/>} tooltipPlacement="bottom"/>
+            <SpeedDialAction key="Bulk Upload" tooltipTitle="Bulk Upload" icon={<AttachmentIcon/>} tooltipPlacement="bottom"
+            onClick={props.handleBulkTransaction}/>
         </SpeedDial>
     );
 };
