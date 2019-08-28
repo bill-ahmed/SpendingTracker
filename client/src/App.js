@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Router, Switch, Route, Link } from 'react-router-dom';
+import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import {DashboardContainer} from './components/DashboardContainer';
 import Footer from './components/Footer';

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import './RecentActivity.css'
+import './css/RecentActivity.css'
 
 class RecentActivity extends Component{
     render(){

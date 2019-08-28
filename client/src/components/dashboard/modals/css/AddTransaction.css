@@ -26,3 +26,11 @@
 .addTransactionInfo .multiLineInputField{
     margin: 15px 0px 15px 0px;
 }
+
+#loadingTransactionCreation{
+    position: absolute;
+
+    margin-top: -12;
+    margin-left: -12;
+    color: #3F51B5;
+}

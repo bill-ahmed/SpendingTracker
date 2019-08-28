@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import './Trends.css'
+import './css/Trends.css'
 // Redux component
 import {useSelector} from 'react-redux';
 
@@ -76,15 +76,17 @@ function Trends() {
             }
         });
     }
-    //#1976D2
+
     const transData = useSelector(state => state.transactionData);
-    if(transData.amountPerDay != null && isLoading){
-        setIsLoading(false);
-
-        createGraphs([["line", "trendsLineGraph", "You Spent:", transData.amountPerDay.dates.map(elem => {return elem.substring(0, 16)}), transData.amountPerDay.totalExpenses],
-        ["doughnut", "trendsPieGraph", "Amount Spent Per Location",transData.amountPerLocation.locations, transData.amountPerLocation.amountSpent]]);
+    if(transData){
+        if(transData.amountPerMetric != null && isLoading){
+            setIsLoading(false);
+    
+            createGraphs([["line", "trendsLineGraph", "You Spent", transData.amountPerMetric.dates.map(elem => {return elem.substring(0, 11)}), transData.amountPerMetric.totalExpenses],
+            ["doughnut", "trendsPieGraph", "Amount Spent Per Location",transData.amountPerMetric.amountPerLocation.locations, transData.amountPerMetric.amountPerLocation.amountSpent]]);
+        }    
     }
-
+    
     return(
         <Paper elevation={1} className="trends">
             <h3>Trends</h3>

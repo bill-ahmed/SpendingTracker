@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
-import './AddTransaction.css';
+import './css/AddTransaction.css';
 
 class AddTransaction extends Component{
     constructor(props){
@@ -22,6 +23,7 @@ class AddTransaction extends Component{
             category: '',
             additionalNotes: '',
             dataValidated: false,
+            isLoading: false
         }
     }
 
@@ -56,13 +58,14 @@ class AddTransaction extends Component{
 
     /**Verify all input data is valid and send it to back-end api */
     handleDataSend(){
-
+        this.setState({isLoading: true});
         // If data is validated, send post request
         if(this.validateData()){
             console.log(this.state);
             this.props.createTransaction(this.state);
 
         }else{
+            this.setState({isLoading: false});
             // Notify user of the error
             this.props.enqueueSnackbar("Error: Please ensure all fields are valid", {
                 variant: 'error',
@@ -114,6 +117,7 @@ class AddTransaction extends Component{
     }
 
     render(){
+        let loading = this.state.isLoading;
         return(
             <Dialog open fullWidth>
 
@@ -158,11 +162,12 @@ class AddTransaction extends Component{
 
                 {/*Add and Close buttons */}
                 <DialogActions>
-                    <Button variant="text" color="inherit" onClick={() => this.props.handleAddTransactionDialogModalClose()}>
+                    <Button disabled={loading} variant="text" color="inherit" onClick={() => this.props.handleAddTransactionDialogModalClose()}>
                         Cancel
                     </Button>
 
-                    <Button variant="contained" color="primary" onClick={this.handleDataSend}>
+                    <Button disabled={loading} variant="contained" color="primary" onClick={this.handleDataSend}>
+                        {loading && <CircularProgress size={30} id="loadingTransactionCreation"/>}
                         Add
                     </Button>
                     

@@ -10,3 +10,17 @@ export const getTransactionData = () => {
         type: "GET_DATA"
     };
 };
+
+export const isMobileUser = (userIsOnMobileDevice) => {
+    return {
+        type: "IS_MOBILE_USER",
+        payload: userIsOnMobileDevice
+    };
+};
+
+export const setOfflineStatus = (offlineStatus) => {
+    return {
+        type: "IS_USER_OFFLINE",
+        payload: offlineStatus
+    };
+};

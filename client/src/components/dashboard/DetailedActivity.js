@@ -7,7 +7,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import './DetailedActivity.css'
+import './css/DetailedActivity.css'
+
 // Redux component
 import {useSelector} from 'react-redux';
 
@@ -65,10 +66,12 @@ function DetailedActivity(props) {
     let tableData = [];
 
     // If we have transaction data in the redux STORE
-    if(transactionData.raw_data != null){ // ONE "=" sign is super important here!
-        console.log({"TRANSACTOIN DATA NOT NULL": transactionData.raw_data})
+    if(transactionData){
+        if(transactionData.raw_data != null){ // ONE "=" sign is super important here!
         tableData = transactionData.raw_data;
+        }
     }
+    
 
     /*Configure data table */
     const columns = ["Actions", "Title", "Amount Spent", "Date", "Location"];

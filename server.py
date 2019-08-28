@@ -7,6 +7,8 @@ import json
 import sys
 import os
 import datetime
+import time
+import random
 
 app = Flask(__name__)
 
@@ -18,12 +20,10 @@ try:
     if os.environ['ENV'] == 'dev':
         cred = credentials.Certificate('./serviceAccount.json')
 except:
-    # If we're in production, get service account info from heroku's config vars
-    credLocation = os.environ.get("serviceAccount", None)
-    cred = credentials.Certificate(credLocation)
+    cred = credentials.Certificate('/etc/secrets/serviceAccount.json')
 
 
-'''*** Initialize connection to Firebase databse (firestore) ***'''
+''' Initialize connection to Firebase databse (firestore) '''
 # Use a service account
 firebase_admin.initialize_app(cred)
 
@@ -33,7 +33,10 @@ db = firestore.client()
 # Initialize dictionary as a cache
 USER_INFO = dict()
 
-'''*** API routes ***'''
+# Initialize cache size 
+CACHE_SIZE = 100
+
+''' API routes '''
 @app.route('/_api/fetchTransactions', methods = ['GET'])
 def fetchTransactions():
 
@@ -44,7 +47,7 @@ def fetchTransactions():
     if(not isAuth[0]):
         # If verification fails, return error message
         response = jsonify({"ErrorMessage": "Invalid Access Token"})
-        response.status_code = 400
+        response.status_code = 401
         return response
 
     decoded_token = isAuth[1]
@@ -69,8 +72,12 @@ def fetchTransactions():
     resp = formatTransactionRecords(docs)
 
     # Add this data to memory for user with UID uid
+    if(len(USER_INFO) > CACHE_SIZE):   # If we've reached the max caching, remove a random element
+        key = random.choice(USER_INFO.keys())
+        USER_INFO.pop(key)
+
     USER_INFO[uid] = resp
-    print("Added user with UID", uid, "to memory.")
+    print("Added user with UID", uid, "to cache.")
 
     # 4. Format and return the response as JSON object
     return jsonify(resp)
@@ -85,7 +92,7 @@ def createTransaction():
     if(not isAuth[0]):
         # If verification fails, return error message
         response = jsonify({"ErrorMessage": "Invalid Access Token"})
-        response.status_code = 400
+        response.status_code = 401
         return response
 
     # Retrieve user's UID
@@ -113,14 +120,15 @@ def createTransaction():
         u'Title': newTransactionData['title'],
         u'Amount': float(newTransactionData['amountSpent']),
         u'Date': formatDate(newTransactionData['date']),
-        u'Location': newTransactionData['location'],
-        u'Category': newTransactionData['category'],
-        u'Notes': newTransactionData['additionalNotes']
+        u'Location': newTransactionData['location'] if (newTransactionData['location'] != "") else "N/A",
+        u'Category': newTransactionData['category'] if (newTransactionData['category'] != "") else "N/A",
+        u'Notes': newTransactionData['additionalNotes'] if (newTransactionData['additionalNotes'] != "") else "N/A"
     }
 
     # 4. Format and return the response as JSON object
     try:
         db.collection(u'users').document(uid).collection(u'records').add(postData)
+        time.sleep(2)   # Sleep for a few seconds to allow Firebase to commit changes
         return jsonify({"ok": True})
     except:
         return jsonify({"ok": False, "Error": "An error ocurred while attempting to create a new transaction."})
@@ -135,7 +143,7 @@ def deleteTransaction():
     if(not isAuth[0]):
         # If verification fails, return error message
         response = jsonify({"ErrorMessage": "Invalid Access Token"})
-        response.status_code = 400
+        response.status_code = 401
         return response
 
     # Retrieve user's UID
@@ -144,7 +152,6 @@ def deleteTransaction():
 
     # Transaction ID in the form of a dictionary
     transactionID = request.get_json()
-    print("Removing transaction with ID:", transactionID['transactionID'])
 
     # Clear entry for user with UID uid from memory
     if(uid in USER_INFO):
@@ -152,14 +159,18 @@ def deleteTransaction():
         print("Removed user with UID", uid, "from memory.")
 
     # If transaction exists with id, delete it. Otherwise, this line does nothing
+    print("Removing transaction with ID:", transactionID['transactionID'])
     db.collection(u'users').document(uid).collection(u'records').document(transactionID['transactionID']).delete()
+
+    time.sleep(2)   # Sleep for a few seconds to allow Firebase to commmit changes
 
     return jsonify("Done")
 
-'''* Check if recieved accessToken is valid or not *
-    * (object) => [bool, str/None]
-'''
-def isAuthenticated(accessToken):
+
+def isAuthenticated(accessToken: str):
+    ''' Check if recieved accessToken is valid or not\n 
+     (object) => [bool, str/None]
+    '''
     try:
         decoded_token = auth.verify_id_token(accessToken)
         return [True, decoded_token]
@@ -168,28 +179,26 @@ def isAuthenticated(accessToken):
         return [False, None]
 
 
-'''* A funtion to check if a user with UID uid exists in our Cloud Firestore database *
-    * (object, string, string) => bool
-'''
-def verifyUserExists(db, uid, endpoint):
+
+def verifyUserExists(db: object, uid: str, endpoint: str):
+    ''' A funtion to check if a user with UID uid exists in our Cloud Firestore database\n
+     (object, string, string) => bool
+    '''
     users = db.collection(endpoint).stream()
     
-    # Set of all users in database
-    userList = set()
-
+    # For every user in the database
     for user in users:
-        userList.add(user.id)
-
-    # Check if uid exists in userList, and return true if so
-    if(uid in userList):
-        return True
+        # If user exists, return True
+        if user.id == uid:
+            return True
 
     return False
 
-'''* A funtion to create initial entries for user with UID uid in Firestore *
-    * (object, string, string, string) => none
-'''
-def createNewUserEntry(db, uid, decoded_token, endpoint):
+
+def createNewUserEntry(db: object, uid: str, decoded_token: str, endpoint: str):
+    ''' A funtion to create initial entries for user with UID uid in Firestore\n
+     (object, string, string, string) => none
+    '''
 
     # Parse decoded token for user's name and extract
     userName = decoded_token["name"].split(" ")
@@ -221,6 +230,9 @@ def createNewUserEntry(db, uid, decoded_token, endpoint):
 
     print("ADDED NEW USER", userName, "with UID", uid)
 
+
+def validateUser(uid: object, accessToken: str):
+    pass
 
 if __name__ == '__main__':
     try:

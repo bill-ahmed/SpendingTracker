@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import './Summary.css'
+import './css/Summary.css'
 
 // Redux component
 import {useSelector} from 'react-redux';
@@ -14,7 +14,8 @@ function Summary(props) {
             <br/>
             <div className="summaryBody">
                 <h4>
-                You've spent $x this past week, and are y% below your monthly goal.
+                This section is currently a work in progress. It will contain brief information on spending habits
+                this past month (or alternate interval).
                 </h4>
 
                 <br/>

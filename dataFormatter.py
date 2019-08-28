@@ -1,9 +1,9 @@
 import datetime
 
-'''* Validate the user data such as title, date, etc.
+def validateDate(data: dict):
+    ''' Validate the user data such as title, date, etc.\n
     (dict) -> bool
-'''
-def validateDate(data):
+    '''
     if((data['title'].strip() == '')):
         return False
     
@@ -25,19 +25,21 @@ def validateDate(data):
     return True
 
 
-'''* Format a string date into a datetime object. The date must be in the format "MM-DD-YYYY"
+def formatDate(date: str):
+    ''' Format a string date into a datetime object. The date must be in the format "MM-DD-YYYY"\n
     (str) -> datetime
-'''
-def formatDate(date):
+    '''
     return (datetime.datetime(int(date[0:4]), int(date[5:7]), int(date[8:])))
 
-'''* Format the data recieved from Firestore into a more usable format *
-    * (dict) => dict
-'''
-def formatTransactionRecords(docs):
+
+def formatTransactionRecords(docs: dict):
+    '''Format the data recieved from Firestore into a more usable format\n
+    (dict) => dict
+    ''' 
     resp = {}
-    resp["amountPerLocation"] = dict()
-    resp["amountPerDay"] = dict()
+    #resp["amountPerLocation"] = dict()
+    resp["amountPerMetric"] = dict()
+    resp["amountPerMetric"]["amountPerLocation"] = dict()
     totalTransactionsPerDate = dict()
 
     raw_data = []
@@ -82,13 +84,18 @@ def formatTransactionRecords(docs):
         transactionDates.append(key)
         totalExpenses.append("%.2f" % totalTransactionsPerDate[key]) # Round to 2 decimal places
     
-    resp["amountPerDay"]["dates"] = transactionDates
-    resp["amountPerDay"]["totalExpenses"] = totalExpenses
+    resp["amountPerMetric"]["dates"] = transactionDates
+    resp["amountPerMetric"]["totalExpenses"] = totalExpenses
+
+    # Amount spend per location
+    resp["amountPerMetric"]["amountPerLocation"]["uid"] = uid
+    resp["amountPerMetric"]["amountPerLocation"]["Title"] = titles
+    resp["amountPerMetric"]["amountPerLocation"]["locations"] = locations
+    resp["amountPerMetric"]["amountPerLocation"]["amountSpent"] = amountSpent
+
+    # Raw, un-touched data from cloud firestore
     resp["raw_data"] = raw_data
 
-    resp["amountPerLocation"]["uid"] = uid
-    resp["amountPerLocation"]["Title"] = titles
-    resp["amountPerLocation"]["locations"] = locations
-    resp["amountPerLocation"]["amountSpent"] = amountSpent
+    
 
     return resp
