@@ -27,10 +27,6 @@ const flaskEndpoint = "http://127.0.0.1:5000";
 const styles = theme => ({
     AppBar: {
       backgroundColor: '#1EB350',
-    },
-    fab: {
-        marginLeft: '15px',
-        marginRight: '15px',
     }
   });
 
@@ -238,8 +234,8 @@ class Dashboard extends Component{
                             Dashboard
                         </div>
 
-                        <QuickActions className={classes.fab} 
-                        handleSingleTransaction={this.handleAddTransactionDialogModalOpen} handleBulkTransaction={this.handleBulkUploadDialogModalOpen}/>
+                        <QuickActions handleSingleTransaction={this.handleAddTransactionDialogModalOpen} 
+                                      handleBulkTransaction={this.handleBulkUploadDialogModalOpen}/>
                         
                         <Button variant="text" color="inherit" onClick={() => window.location.href = "/"}>
                             Home
