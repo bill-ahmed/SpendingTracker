@@ -8,6 +8,12 @@ import Papa from 'papaparse';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import { withSnackbar } from 'notistack';
 import './css/BulkUpload.css';
 
 const steps = ["Choose file to upload", "Validate file", "Verify Data", "Upload"]
@@ -19,21 +25,65 @@ const steps = ["Choose file to upload", "Validate file", "Verify Data", "Upload"
  * @param parsingFile (bool) If the uploaded file is being processed or not
  * @returns DOM elements to render in the provided step
 */
-function getStepContent(stepIndex, fileUploadChange, parsingFile, fileUploadedData){
+function getStepContent(stepIndex, fileUploadChange, parsingFile, fileUploadedData, tableHeadings){
     console.log("file uploaded:", fileUploadedData)
     switch(stepIndex){
         case 0:
             return (<div>
-                        <input type="file" id="bulkFileUpload" onChange={() => fileUploadChange()}/>
+                        <input type="file" accept=".csv" id="bulkFileUpload" onChange={() => fileUploadChange()}/>
                         <h4>Note: File must be in CSV format.</h4>
                     </div>);
         case 1:
-            return (parsingFile ? <CircularProgress/> : 
-                <div>
-                    <h3>{"Completed parsing the file: " + fileUploadedData}</h3>
-                </div>);
+            if(parsingFile){
+                return <CircularProgress/>
+            } else{
+                if(fileUploadedData){
+                    // If no errors were found in file data
+                    if(fileUploadedData.errors.length === 0){
+                        return(<h3>Validated file, click Next to continue.</h3>);
+                    } else{
+
+                        return(<h3>Error validating file. Please go back and try again.</h3>);
+                    }
+                }
+            }
+            return "Error."
         case 2:
-            return (<h4>If the following data is correct, click Next.</h4>);
+
+            return (
+            <div>
+                <h4>The following is a list of debit transactions that were found. If the 
+                    data is correct, click Next.</h4>
+                <br/>
+                <Table id="listOfUserTransactions">
+                    <TableHead>
+                        <TableRow key="tableHeader">
+                            {tableHeadings.map(tableHeading => {
+                                return(
+                                    <TableCell key={tableHeading}>{tableHeading}</TableCell>
+                                );
+                            })}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {fileUploadedData.data.slice(1).map(row => {
+                            // If row is not empty and a DEBIT transaction is recieved
+                            if(row !== [""] && row[2] !== ""){
+                                return(
+                                    <TableRow key={String(Math.random())}>
+                                        {row.map(rowElement => {
+                                            return(
+                                                <TableCell>{rowElement}</TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                );
+                            }
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
+            );
         case 3:
             return (<h4>Click Upload to add transactions. It may take a while.</h4>);
         default:
@@ -48,13 +98,16 @@ function BulkUpload(props){
     const [fileUploadedData, setFileUploadedData] = useState({})
     const [parsingFile, setParsingFile] = useState(true);   // If the CSV file is being processed or not
 
+    // Headings for the table that will display transaction data
+    const tableHeadings = ["Date", "Title", "Debit", "Credit", "Balance"];
+
     /**Callback function for when parsing is completed. Add all the data into this.state
      * @param result The results of parsing
      * @param file The file the user uploaded
      */
     const onCompletedParsing = (result, file) => {
-        setParsingFile(false);
         setFileUploadedData(result);
+        setParsingFile(false);
         console.log("Completed parsing CSV:", result);
     }
 
@@ -85,9 +138,28 @@ function BulkUpload(props){
 
     /**Handle user-uploaded file via Papa library */
     const handleFileUploadChange = () => {
-        setFileUploaded(true);
         var fileUploaded = document.getElementById("bulkFileUpload");
-        setFileUploaded(fileUploaded.files[0])
+
+        // If the user has uploaded a file
+        if(fileUploaded.files[0]){
+
+            // If the file uploaded is of type CSV
+            if(fileUploaded.files[0].type === "application/vnd.ms-excel"){
+                setFileUploaded(fileUploaded.files[0]);
+                return;
+            } 
+
+            // Give user error message that improper file was uploaded
+            else{
+                let errMessage = "Error: Invalid file uploaded";
+                props.enqueueSnackbar(errMessage, {
+                    variant: 'error',
+                    preventDuplicate: true
+                });
+            }
+        }
+        setFileUploaded(null);
+        console.log("updated the file that was uploaded", fileUploaded.files)
     }
 
     /**Handle going to previous workflow step */
@@ -101,7 +173,7 @@ function BulkUpload(props){
     }
 
     return(
-        <Dialog open fullWidth>
+        <Dialog open maxWidth="md" fullWidth>
             <DialogTitle>
                     Bulk Upload
                 </DialogTitle>
@@ -118,7 +190,7 @@ function BulkUpload(props){
                     </Stepper>
 
                     <div className="stepContent">
-                        {getStepContent(currStep, handleFileUploadChange, parsingFile, fileUploadedData)}
+                        {getStepContent(currStep, handleFileUploadChange, parsingFile, fileUploadedData, tableHeadings)}
                     </div>
                 </DialogContent>
 
@@ -137,4 +209,4 @@ function BulkUpload(props){
     );
 }
 
-export default BulkUpload;
+export default withSnackbar(BulkUpload);

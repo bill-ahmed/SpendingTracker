@@ -20,7 +20,6 @@ function QuickActions(props){
         setOpen(false);
     }
 
-    console.log(props);
     return(
         <div id="quickActions">
             <SpeedDial ariaLabel="Quick Actions Menu" open={open} icon={<SpeedDialIcon/>} 
