@@ -29,6 +29,8 @@
     justify-content: center;
 
     width: calc(25vw + 200px);
+
+    flex-grow: 1;
 }
 
 /* .dashboard .mainContainer .leftPane .trends{

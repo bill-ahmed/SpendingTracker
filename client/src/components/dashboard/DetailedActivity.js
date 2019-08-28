@@ -66,9 +66,12 @@ function DetailedActivity(props) {
     let tableData = [];
 
     // If we have transaction data in the redux STORE
-    if(transactionData.raw_data != null){ // ONE "=" sign is super important here!
+    if(transactionData){
+        if(transactionData.raw_data != null){ // ONE "=" sign is super important here!
         tableData = transactionData.raw_data;
+        }
     }
+    
 
     /*Configure data table */
     const columns = ["Actions", "Title", "Amount Spent", "Date", "Location"];
