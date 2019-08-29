@@ -13,6 +13,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
 import ValidateTransactions from '../../../api/ValidateTransactions';
 import TransactionDateHelper from '../../../api';
 import { withSnackbar } from 'notistack';
@@ -33,8 +34,8 @@ function getStepContent(stepIndex, fileUploadChange, parsingFile, fileUploadedDa
     switch(stepIndex){
         case 0:
             return (<div>
-                        <input type="file" accept=".csv" id="bulkFileUpload" onChange={() => fileUploadChange()}/>
-                        <h4>Note: File must be in CSV format.</h4>
+                        <TextField inputProps={{accept: '.csv'}} variant="outlined" type="file" 
+                        id="bulkFileUpload" onChange={() => fileUploadChange()} helperText="File must be in CSV format."/>
                     </div>);
         case 1:
             if(parsingFile){
@@ -62,11 +63,11 @@ function getStepContent(stepIndex, fileUploadChange, parsingFile, fileUploadedDa
         case 2:
 
             return (
-            <div>
+            <div id="listOfUserTransactions">
                 <h4>The following is a list of debit transactions that were found. If the 
                     data is correct, click Next.</h4>
                 <br/>
-                <Table id="listOfUserTransactions">
+                <Table>
                     <TableHead>
                         <TableRow key="tableHeader">
                             {tableHeadings.map(tableHeading => {
@@ -77,7 +78,7 @@ function getStepContent(stepIndex, fileUploadChange, parsingFile, fileUploadedDa
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {fileUploadedData.data.slice(1).map(row => {
+                        {fileUploadedData.data.map(row => {
                             // If row is not empty and a DEBIT transaction is recieved
                             if(row !== [""] && row[2] !== ""){
                                 return(
@@ -120,7 +121,7 @@ function BulkUpload(props){
         // Remove all non-debit transactions
         let newTransactionData = TransactionDateHelper.RemoveNonDebitTransactions(result.data);
         result.data = newTransactionData;
-        
+
         setFileUploadedData(result);
         setParsingFile(false);
         // console.log("Completed parsing CSV:", result);
@@ -150,7 +151,7 @@ function BulkUpload(props){
             setUploadLoading();
 
             // Retrieve transaction records in proper format from helper
-            let transactionData = TransactionDateHelper.CreateBulkTransactions(fileUploadedData.data);
+            let transactionData = TransactionDateHelper.CreateBulkTransactionsObject(fileUploadedData.data);
             console.log(transactionData);
         } else{
             setCurrStep(currStep + 1);

@@ -1,7 +1,10 @@
 // Redux components
 import {useDispatch} from 'react-redux';
 import {useSelector} from 'react-redux';
+
+// Other
 import {setTransactionData, setOfflineStatus} from '../actions';
+
 
 const fetch = require('node-fetch');
 // const flaskEndpoint = "https://spendingtracker.billahmed.com";
@@ -54,6 +57,98 @@ function FetchData(successFunc, key) {
     });
 }
 
+/**POST request to store a new transaction
+ * 
+ * @param recordInformation (object) The new record to store.
+ * @param onFinishFunc (Function) The function to call when api request is completed. The function 
+ * must take a parameter "respData", which is in the format: {status: bool, message: str, code: int}
+ * @returns (Object) Response data from api request
+ */
+export function CreateTransaction(recordInformation, onFinishFunc){
+    var endpoint = `${flaskEndpoint}/_api/createTransaction`;
+    
+    var body = {
+        title: recordInformation.title,
+        amountSpent: recordInformation.amountSpent,
+        date: recordInformation.date,
+        location: recordInformation.location,
+        category: recordInformation.category,
+        additionalNotes: recordInformation.additionalNotes}
+
+    var options = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            "accessToken": localStorage.getItem("accessToken")
+        },
+        body: JSON.stringify(body)
+    }
+    //console.log(recordInformation);
+    return new Promise(function(resolve, reject){
+        fetch(endpoint, options)
+        .then(res => {
+            resolve(res);    
+        })
+        .catch((error) => {
+            reject(error);    
+        });
+    });
+}
+
+/**POST request to delete and existing transaction
+ * 
+ * @param transactionID (str) The transaction to remove.
+ * @param onFinishFunc (Function) The function to call when api request is completed. The function 
+ * must take a parameter "respData", which is in the format: {status: bool, code: int, action: str, message: str}
+ * @returns (Object) Response data from api request
+ */
+export function DeleteTransaction(transactionID, onFinishFunc){
+    var endpoint = `${flaskEndpoint}/_api/deleteTransaction`;
+    
+    var body = {
+        transactionID: transactionID,
+    }
+
+    var options = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            "accessToken": localStorage.getItem("accessToken")
+        },
+        body: JSON.stringify(body)
+    }
+
+    return new Promise(function(resolve, reject){
+        fetch(endpoint, options)
+        .then(res => {
+            resolve(res);  
+        })
+        .catch((error) => {
+            reject(error);    
+        });
+    });
+}
+
+/**Handle response data from api call
+ * @param resp The raw response data
+ * @param callback The function to send data to
+ * @param action (str) The action that was taken, e.g. "createTransaction", "deleteTransaction", etc.
+ */
+function handleTransactionResponse(resp, callback, action){
+    let result = {ok: resp.ok, status: resp.status, action: action};
+    if(resp.ok){
+        return result;
+    } else{
+        resp.json().then((res) => {
+            console.log(res);
+        })
+    }
+}
+
+/* *** HELPER FUNCTIONS FOR MANIPULATING TRANSACTION DATA *** */
+
 /**Given the raw data from firebase, map all the dates to the amount spent each day
  * @param rawData The data retrieved from server
  * @returns A modified response that includes a mapping of each data to the amount spent
@@ -90,7 +185,7 @@ function formatDate(date){
  * @param data ([Object]) Array of transaction data. Must be in the format [[date: str, title: str, debit: str], [date2: str, title2: str, debit2: str], ... ]
  * @returns An array of objects that's ready to be shipped to back-end, in the format: [ { date: str, title: str, amountSpent: str }, { ... }, ... ]
  */
-function CreateBulkTransactions(data){
+function CreateBulkTransactionsObject(data){
     let result = [];
     
     // For every transaction data
@@ -121,6 +216,6 @@ function RemoveNonDebitTransactions(data){
     return result;
 }
 
-const funcs = {FetchData, formatDate, CreateBulkTransactions, RemoveNonDebitTransactions};
+const funcs = {FetchData, formatDate, CreateBulkTransactionsObject, RemoveNonDebitTransactions};
 
 export default funcs;

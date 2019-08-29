@@ -17,7 +17,10 @@ class DeleteTransactionModal extends Component{
     }
 
     handleDeleteClick(){
-        this.props.deleteMethod();
+        this.props.deleteMethod()
+        .then((res) => this.props.handleAPIResponse(res, "deleteTransaction"))
+        .catch((res) => this.props.handleAPIResponse(res, "deleteTransaction"));
+
         this.setState({isDisabled: true});
         this.setState({isLoading: true});
     }
