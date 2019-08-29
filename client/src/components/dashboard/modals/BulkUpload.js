@@ -13,10 +13,13 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import ValidateTransactions from '../../../api/ValidateTransactions';
+import TransactionDateHelper from '../../../api';
 import { withSnackbar } from 'notistack';
 import './css/BulkUpload.css';
 
 const steps = ["Choose file to upload", "Validate file", "Verify Data", "Upload"]
+const MAX_RECORDS = 500;
 
 /**Given the index of the current step, return props that should be displayed 
  * @param stepIndex (int) The current step that the user is in
@@ -26,7 +29,7 @@ const steps = ["Choose file to upload", "Validate file", "Verify Data", "Upload"
  * @returns DOM elements to render in the provided step
 */
 function getStepContent(stepIndex, fileUploadChange, parsingFile, fileUploadedData, tableHeadings){
-    console.log("file uploaded:", fileUploadedData)
+    // console.log("file uploaded:", fileUploadedData)
     switch(stepIndex){
         case 0:
             return (<div>
@@ -38,12 +41,20 @@ function getStepContent(stepIndex, fileUploadChange, parsingFile, fileUploadedDa
                 return <CircularProgress/>
             } else{
                 if(fileUploadedData){
+
+                    // If there are too many records
+                    if(fileUploadedData.data.length > MAX_RECORDS){
+                        return(<h3>Error: Too many records. You may only upload 500 at a time.</h3>);
+                    }
+                    
                     // If no errors were found in file data
-                    if(fileUploadedData.errors.length === 0){
-                        return(<h3>Validated file, click Next to continue.</h3>);
+                    else if(fileUploadedData.errors.length === 0 && ValidateTransactions(fileUploadedData.data)){
+                        console.log(fileUploadedData.data);
+                        return(<h3>The file is valid, click Next to continue.</h3>);
+                        
                     } else{
 
-                        return(<h3>Error validating file. Please go back and try again.</h3>);
+                        return(<h3>Error validating file. Please ensure the formatting and data is correct.</h3>);
                     }
                 }
             }
@@ -106,9 +117,13 @@ function BulkUpload(props){
      * @param file The file the user uploaded
      */
     const onCompletedParsing = (result, file) => {
+        // Remove all non-debit transactions
+        let newTransactionData = TransactionDateHelper.RemoveNonDebitTransactions(result.data);
+        result.data = newTransactionData;
+        
         setFileUploadedData(result);
         setParsingFile(false);
-        console.log("Completed parsing CSV:", result);
+        // console.log("Completed parsing CSV:", result);
     }
 
     // Papa parsing config options
@@ -116,8 +131,9 @@ function BulkUpload(props){
         delimiter: "",  // auto-detect
         newline: "",	// auto-detect
         worker: true,    // dispatch worker so file can be parsed in the background
-        dynamicTyping: false,   // dynamically determine int, float, strings, etc.
+        dynamicTyping: false,   // DO NOT dynamically determine int, float, strings, etc.
         complete: onCompletedParsing,         // Callback function for when parsing is completed
+        skipEmptyLines: 'greedy',   // Ignore empty lines
 
     }
 
@@ -128,9 +144,14 @@ function BulkUpload(props){
 
     /**Handle going to the workflow step */
     const handleNext = () => {
-        // If we've reached the end of the workflow, disable Upload button and indicate loading
+        // If we've reached the end of the workflow, disable Upload button, indicate loading,
+        // and upload transaction data
         if(currStep === steps.length - 1){
             setUploadLoading();
+
+            // Retrieve transaction records in proper format from helper
+            let transactionData = TransactionDateHelper.CreateBulkTransactions(fileUploadedData.data);
+            console.log(transactionData);
         } else{
             setCurrStep(currStep + 1);
         }
@@ -159,7 +180,7 @@ function BulkUpload(props){
             }
         }
         setFileUploaded(null);
-        console.log("updated the file that was uploaded", fileUploaded.files)
+        // console.log("updated the file that was uploaded", fileUploaded.files)
     }
 
     /**Handle going to previous workflow step */

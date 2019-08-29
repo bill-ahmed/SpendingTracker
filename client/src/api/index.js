@@ -86,6 +86,41 @@ function formatDate(date){
     return new Date(tempDate);
 }
 
-const funcs = {FetchData, formatDate};
+/**Given array of transactions, create an object to represent the entire list
+ * @param data ([Object]) Array of transaction data. Must be in the format [[date: str, title: str, debit: str], [date2: str, title2: str, debit2: str], ... ]
+ * @returns An array of objects that's ready to be shipped to back-end, in the format: [ { date: str, title: str, amountSpent: str }, { ... }, ... ]
+ */
+function CreateBulkTransactions(data){
+    let result = [];
+    
+    // For every transaction data
+    for(let i = 0; i < data.length; i++){
+
+        // Create object to store all the required transaction info
+        let currTransaction = {date: data[i][0].trim(), title: data[i][1].trim(), amountSpent: data[i][2].trim()};
+
+        result.push(currTransaction);   // Append to array
+    }
+
+    return result;
+}
+
+/**Remove all non-debit transactions from given transaction records
+ * @param data ([Object]) Array of transaction data. Must be in the format [[date: str, title: str, debit: str], [date2: str, title2: str, debit2: str], ... ]
+ * @returns Same object as given, but without the credit transactions
+ */
+function RemoveNonDebitTransactions(data){
+    let result = [];
+
+    for(let i = 0; i < data.length; i++){
+        if(data[i][2] !== ''){
+            result.push(data[i]);
+        }
+    }
+
+    return result;
+}
+
+const funcs = {FetchData, formatDate, CreateBulkTransactions, RemoveNonDebitTransactions};
 
 export default funcs;
