@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import {CreateTransaction} from '../../../api';
 import Dialog from '@material-ui/core/Dialog';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
@@ -62,7 +63,9 @@ class AddTransaction extends Component{
         // If data is validated, send post request
         if(this.validateData()){
             console.log(this.state);
-            this.props.createTransaction(this.state);
+            CreateTransaction(this.state)
+            .then((res) => this.props.handleAPIResponse(res, 'createTransaction'))
+            .catch((res) => this.props.handleAPIResponse(res, 'createTransaction'));
 
         }else{
             this.setState({isLoading: false});

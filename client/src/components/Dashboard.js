@@ -27,10 +27,6 @@ const flaskEndpoint = "http://127.0.0.1:5000";
 const styles = theme => ({
     AppBar: {
       backgroundColor: '#1EB350',
-    },
-    fab: {
-        marginLeft: '15px',
-        marginRight: '15px',
     }
   });
 
@@ -41,7 +37,6 @@ class Dashboard extends Component{
 
         // Bind all functions to "this"
         this.fetchData = this.fetchData.bind(this);
-        this.createTransaction = this.createTransaction.bind(this);
 
         this.handleResponse = this.handleResponse.bind(this);
         this.handleUserMenuOpen = this.handleUserMenuOpen.bind(this);
@@ -89,101 +84,57 @@ class Dashboard extends Component{
         .catch((error) => console.log({"Error": error}));
     }
 
-    /**POST request to store a new transaction
-     * 
-     * @param recordInformation (object) The new record to store.
-     */
-    createTransaction(recordInformation){
-        var endpoint = `${flaskEndpoint}/_api/createTransaction`;
-        
-        var body = {
-            title: recordInformation.title,
-            amountSpent: recordInformation.amountSpent,
-            date: recordInformation.date,
-            location: recordInformation.location,
-            category: recordInformation.category,
-            additionalNotes: recordInformation.additionalNotes}
-
-        var options = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                "accessToken": localStorage.getItem("accessToken")
-            },
-            body: JSON.stringify(body)
-        }
-        //console.log(recordInformation);
-
-        fetch(endpoint, options)
-        .then(res => {
-            // If response is good, display success message
-            if(res.ok){
-
-                this.handleResponse("success", "Added Transaction! Reloading...", res.status);
-                setTimeout(() => window.location.reload(), 2000); // Wait 2 seconds before reloading the page
-                
-            } else{
-                this.handleResponse("error", "Unable to add transaction. Please try again later.", res.status, true);
-                console.log(res.json());
-            }})
-        .then(resp => console.log())
-        .catch((error) => {
-            this.handleResponse("error", "Unable to add transaction. Please try again later.", 500, true);
-            console.log({"Error": error})});
-    }
-
-    /**POST request to delete and existing transaction
-     * 
-     * @param transactionID (str) The transaction to remove.
-     */
-    deleteTransaction(transactionID){
-        var endpoint = `${flaskEndpoint}/_api/deleteTransaction`;
-        
-        var body = {
-            transactionID: transactionID,
-        }
-
-        var options = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                "accessToken": localStorage.getItem("accessToken")
-            },
-            body: JSON.stringify(body)
-        }
-
-        fetch(endpoint, options)
-        .then(res => {
-            //console.log(res)
-            // If we weren't able to delete a record, notify user
-            if(res.ok){
-
-                setTimeout(() => window.location.reload(), 2000); // Wait 2 seconds before reloading the page
-
-            } else{
-                console.log({"Error" : res.json()});
-                //setTimeout(() => window.location.reload(), 2000); // Wait 2 seconds before reloading the page
-            }})
-        .catch((error) => console.log({"Error": error}));
-    }
-
     /**Enqueue a snackbar to notify user of error that has occured
-     * @param success (bool) true iff the reponse was a success, false otherwise
-     * @param message (str) The message to display in snackbar
-     * @param errCode (int) The error code returned by server, if applicable
-     * @param showButton (bool) If true, a button to dismiss the snakcbar will appear
+     * @param resp (Object) The raw response data from api call
+     * @param actionTaken (str) The action taken, e.g. "deleteTransaction", "createTransaction", etc.
      */
-    handleResponse(repVariant, message, errCode, showButton){
-        // Enqueue a snackbar
-        this.props.enqueueSnackbar(message, {
-            variant: repVariant,
+    handleResponse(resp, actionTaken){
+        console.log(resp);
+        let snackbarProps = {
             preventDuplicate: true,
             action: (key) => (
-                showButton && <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Got It</Button>
+                <Button variant="outlined" color="inherit" onClick={() => this.props.closeSnackbar(key)}>Okay</Button>
             ),
-        });
+        };
+
+        let message = '';   // Message to send to user via snackbar
+
+        if(resp.ok){
+            snackbarProps.variant = 'success';
+
+            setTimeout(() => window.location.reload(), 3000); // Wait 3 seconds before reloading the page
+
+            switch(actionTaken){
+                case 'createTransaction':
+                    message = "Successfully added transaction, refreshing...";
+                    break;
+                
+                case 'deleteTransaction':
+                    message = "Successfully deleted transaction, refreshing...";
+                    break;
+
+                default:
+                    break;
+            }
+        } else{
+            snackbarProps.variant = 'error';
+
+            switch(actionTaken){ 
+                case 'createTransaction':
+                    message = "Failed to create transaction. Please try again later.";
+                    break;
+                
+                case 'deleteTransaction':
+                    message = "Failed to delete the transaction. Please try again later.";
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        // Create snackbar
+        this.props.enqueueSnackbar(message, snackbarProps);
     }
 
     handleUserMenuOpen(event){
@@ -238,8 +189,8 @@ class Dashboard extends Component{
                             Dashboard
                         </div>
 
-                        <QuickActions className={classes.fab} 
-                        handleSingleTransaction={this.handleAddTransactionDialogModalOpen} handleBulkTransaction={this.handleBulkUploadDialogModalOpen}/>
+                        <QuickActions handleSingleTransaction={this.handleAddTransactionDialogModalOpen} 
+                                      handleBulkTransaction={this.handleBulkUploadDialogModalOpen}/>
                         
                         <Button variant="text" color="inherit" onClick={() => window.location.href = "/"}>
                             Home
@@ -301,12 +252,12 @@ class Dashboard extends Component{
 
                     <div className="rightPane">
                         <Summary className="summary"/>
-                        <DetailedActivity className="detailedActivity" deleteData={this.deleteTransaction}/>
+                        <DetailedActivity className="detailedActivity" handleAPIResponse={this.handleResponse}/>
                     </div>
 
                     {/* Pop-up modals to allow adding transactions */}
                     {this.state.addTransactionDialogOpen &&
-                    <AddTransaction handleAddTransactionDialogModalClose={this.handleAddTransactionDialogModalClose} createTransaction={this.createTransaction}/>}
+                    <AddTransaction handleAPIResponse={this.handleResponse} handleAddTransactionDialogModalClose={this.handleAddTransactionDialogModalClose} createTransaction={this.createTransaction}/>}
 
                     {this.state.bulkUploadDialogOpen && <BulkUpload handleBulkUploadDialogModalClose={this.handleBulkUploadDialogModalClose}/>}
                 </div>

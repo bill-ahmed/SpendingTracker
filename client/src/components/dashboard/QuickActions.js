@@ -4,6 +4,7 @@ import CreateIcon from '@material-ui/icons/Create'
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
+import './css/QuickActions.css';
 
 function QuickActions(props){
     // Equivalent of this.state
@@ -20,15 +21,17 @@ function QuickActions(props){
     }
 
     return(
-        <SpeedDial ariaLabel="Quick Actions Menu" open={open} icon={<SpeedDialIcon/>} 
-        onBlur={handleClose} onClose={handleClose} onFocus={handleOpen} onMouseEnter={handleOpen} onMouseLeave={handleClose} direction="left">
+        <div id="quickActions">
+            <SpeedDial ariaLabel="Quick Actions Menu" open={open} icon={<SpeedDialIcon/>} 
+            onBlur={handleClose} onClose={handleClose} onFocus={handleOpen} onMouseEnter={handleOpen} onMouseLeave={handleClose} direction="down">
 
-            <SpeedDialAction key="Add Single Transaction" tooltipTitle="Single Transaction" icon={<CreateIcon/>} tooltipPlacement="bottom"
-            onClick={props.handleSingleTransaction}/>
+                <SpeedDialAction key="Add Single Transaction" tooltipTitle="Single Transaction" icon={<CreateIcon/>} tooltipPlacement="bottom"
+                onClick={props.handleSingleTransaction}/>
 
-            <SpeedDialAction key="Bulk Upload" tooltipTitle="Bulk Upload" icon={<AttachmentIcon/>} tooltipPlacement="bottom"
-            onClick={props.handleBulkTransaction}/>
-        </SpeedDial>
+                <SpeedDialAction key="Bulk Upload" tooltipTitle="Bulk Upload" icon={<AttachmentIcon/>} tooltipPlacement="bottom"
+                onClick={props.handleBulkTransaction}/>
+            </SpeedDial>
+        </div>
     );
 };
 

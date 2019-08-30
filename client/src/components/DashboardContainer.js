@@ -34,10 +34,10 @@ export function DashboardContainer(props) {
         // Add cached data to redux store
         dispatch(setTransactionData(tempTransactionData));
 
-        let message = "Lost connection to the server...try logging out and back in."
+        let message = "Unable to authenticate with the server. Try logging out and back in."
         // Notify user of offline mode
         enqueueSnackbar(message, {
-            variant: 'info',
+            variant: 'default',
             persist: true,
             preventDuplicate: true,
             key: snackbarKey

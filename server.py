@@ -36,6 +36,9 @@ USER_INFO = dict()
 # Initialize cache size 
 CACHE_SIZE = 100
 
+# Maximum number of transactions allowed in bulk upload
+MAX_NUM_BULK_TRANSACTIONS = 500
+
 ''' API routes '''
 @app.route('/_api/fetchTransactions', methods = ['GET'])
 def fetchTransactions():
@@ -102,8 +105,8 @@ def createTransaction():
     # Transaction data in the form of a dictionary
     newTransactionData = request.get_json()
     
-    # Validarte transaction data
-    if(not (validateDate(newTransactionData))):
+    # Validate transaction data
+    if(not (validateData(newTransactionData))):
         # Since there are errors in the transaction data, return bad request
         response = jsonify({"ErrorMessage": "Improper transaction data"})
         response.status_code = 400
@@ -132,6 +135,82 @@ def createTransaction():
         return jsonify({"ok": True})
     except:
         return jsonify({"ok": False, "Error": "An error ocurred while attempting to create a new transaction."})
+
+
+@app.route('/_api/bulkUploadTransactions', methods = ['POST'])
+def bulkUploadTransactions():
+
+    # 1. Verify user's accessToken
+    accessToken = request.headers.get("accessToken")
+    isAuth = isAuthenticated(accessToken)
+
+    if(not isAuth[0]):
+        # If verification fails, return error message
+        response = jsonify({"ErrorMessage": "Invalid Access Token"})
+        response.status_code = 401
+        return response
+
+    # Retrieve user's UID
+    decoded_token = isAuth[1]
+    uid = decoded_token['uid']
+
+    # Transaction data in the form of a dictionary
+    newTransactionData = request.get_json()
+    bulkData = newTransactionData['bulkData']
+
+    print(bulkData)
+
+    # Store all the data to be posted to firebase
+    postData = []
+
+    # Validate transaction data
+    # If number of transactions is greater than max allowed, return error
+    if(len(bulkData) > MAX_NUM_BULK_TRANSACTIONS):
+        response = jsonify({"ErrorMessage": "Too many transactions. Maximum of 500 allowed."})
+        response.status_code = 400
+        return response
+
+    # For every transaction, verify it
+    for entry in bulkData:
+        if(not validateData(entry)):
+            # Since there are errors in the transaction data, return bad request
+            response = jsonify({"ErrorMessage": "Improper transaction data"})
+            response.status_code = 400
+            return response
+        else:
+            postData.append({
+                u'Title': entry['title'],
+                u'Amount': float(entry['amountSpent']),
+                u'Date': formatDate(entry['date']),
+                u'Location': "N/A",
+                u'Category': "N/A",
+                u'Notes': "N/A"
+            })
+    
+
+    # At this point, all transaction data is valid
+    # Clear entry for user with UID uid from memory
+    if(uid in USER_INFO):
+        USER_INFO.pop(uid)
+        print("Removed user with UID", uid, "from memory.")
+    
+
+    # *** Setup batch writes ***
+    batch = db.batch()
+    
+    # For every transaction in postData, add it to the batch
+    for transactionData in postData:
+
+        # Create new document for this transaction
+        newDocument_ref = db.collection(u'users').document(uid).collection(u'records').document()
+
+        batch.set(newDocument_ref, transactionData) # Add transaction to batch
+
+    try:
+        batch.commit()  # commit the changes
+        return jsonify({"ok": true})
+    except:
+        return jsonify({"ok": False, "Error": "An error ocurred while attempting to bulk upload."})
 
 
 @app.route('/_api/deleteTransaction', methods = ['POST'])

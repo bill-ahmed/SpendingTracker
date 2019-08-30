@@ -10,6 +10,9 @@ h5 {
     margin: 5px;
 }
 
+.trends{
+    flex-grow: 0.7;
+}
 
 .graphsContainer{
     display: flex;
@@ -20,6 +23,8 @@ h5 {
 
     min-width: 200px;
     min-height: 200px;
+
+    height: 100%;
 }
 
 .graphsContainer .graph{

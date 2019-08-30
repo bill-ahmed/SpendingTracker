@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import DeleteTransactionModal from './modals/DeleteTransactionModal'
+import {DeleteTransaction} from '../../api';
 import MUIDataTable from "mui-datatables";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -101,7 +102,7 @@ function DetailedActivity(props) {
             />
 
             {deleteModalOpen && <DeleteTransactionModal handleDeleteModalClose={handleDeleteModalClose} 
-            deleteMethod={() => props.deleteData(transactionToDelete[0])} transactionInfo={transactionToDelete}/>}
+            deleteMethod={() => DeleteTransaction(transactionToDelete[0])} handleAPIResponse={props.handleAPIResponse} transactionInfo={transactionToDelete}/>}
         </Paper>
     );
 }
