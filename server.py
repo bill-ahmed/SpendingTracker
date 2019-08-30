@@ -36,6 +36,9 @@ USER_INFO = dict()
 # Initialize cache size 
 CACHE_SIZE = 100
 
+# Maximum number of transactions allowed in bulk upload
+MAX_NUM_BULK_TRANSACTIONS = 500
+
 ''' API routes '''
 @app.route('/_api/fetchTransactions', methods = ['GET'])
 def fetchTransactions():
@@ -103,7 +106,7 @@ def createTransaction():
     newTransactionData = request.get_json()
     
     # Validate transaction data
-    if(not (validateDate(newTransactionData))):
+    if(not (validateData(newTransactionData))):
         # Since there are errors in the transaction data, return bad request
         response = jsonify({"ErrorMessage": "Improper transaction data"})
         response.status_code = 400
@@ -153,35 +156,61 @@ def bulkUploadTransactions():
 
     # Transaction data in the form of a dictionary
     newTransactionData = request.get_json()
-    
+    bulkData = newTransactionData['bulkData']
+
+    print(bulkData)
+
+    # Store all the data to be posted to firebase
+    postData = []
+
     # Validate transaction data
-    print(newTransactionData)
+    # If number of transactions is greater than max allowed, return error
+    if(len(bulkData) > MAX_NUM_BULK_TRANSACTIONS):
+        response = jsonify({"ErrorMessage": "Too many transactions. Maximum of 500 allowed."})
+        response.status_code = 400
+        return response
 
-    return jsonify({"ok": True})
-    # # Clear entry for user with UID uid from memory
-    # if(uid in USER_INFO):
-    #     USER_INFO.pop(uid)
-    #     print("Removed user with UID", uid, "from memory.")
+    # For every transaction, verify it
+    for entry in bulkData:
+        if(not validateData(entry)):
+            # Since there are errors in the transaction data, return bad request
+            response = jsonify({"ErrorMessage": "Improper transaction data"})
+            response.status_code = 400
+            return response
+        else:
+            postData.append({
+                u'Title': entry['title'],
+                u'Amount': float(entry['amountSpent']),
+                u'Date': formatDate(entry['date']),
+                u'Location': "N/A",
+                u'Category': "N/A",
+                u'Notes': "N/A"
+            })
+    
 
-    # print(newTransactionData)
-    # # Format the new transaction data into something Firestore will accept
-    # postData = {
-    #     u'Title': newTransactionData['title'],
-    #     u'Amount': float(newTransactionData['amountSpent']),
-    #     u'Date': formatDate(newTransactionData['date']),
-    #     u'Location': newTransactionData['location'] if (newTransactionData['location'] != "") else "N/A",
-    #     u'Category': newTransactionData['category'] if (newTransactionData['category'] != "") else "N/A",
-    #     u'Notes': newTransactionData['additionalNotes'] if (newTransactionData['additionalNotes'] != "") else "N/A"
-    # }
+    # At this point, all transaction data is valid
+    # Clear entry for user with UID uid from memory
+    if(uid in USER_INFO):
+        USER_INFO.pop(uid)
+        print("Removed user with UID", uid, "from memory.")
+    
 
-    # # 4. Format and return the response as JSON object
-    # try:
-    #     # TO-DO: Bulk upload to firebase
+    # *** Setup batch writes ***
+    batch = db.batch()
+    
+    # For every transaction in postData, add it to the batch
+    for transactionData in postData:
 
-    #     time.sleep(2)   # Sleep for a few seconds to allow Firebase to commit changes
-    #     return jsonify({"ok": True})
-    # except:
-    #     return jsonify({"ok": False, "Error": "An error ocurred while attempting to create a new transaction."})
+        # Create new document for this transaction
+        newDocument_ref = db.collection(u'users').document(uid).collection(u'records').document()
+
+        batch.set(newDocument_ref, transactionData) # Add transaction to batch
+
+    try:
+        batch.commit()  # commit the changes
+        return jsonify({"ok": true})
+    except:
+        return jsonify({"ok": False, "Error": "An error ocurred while attempting to bulk upload."})
 
 
 @app.route('/_api/deleteTransaction', methods = ['POST'])

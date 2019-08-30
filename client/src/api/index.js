@@ -96,6 +96,39 @@ export function CreateTransaction(recordInformation, onFinishFunc){
     });
 }
 
+/**Bulk upload of many transactions.
+ * @param data The data to upload. Must be in the format: [ { date: str, title: str, amountSpent: str }, { ... }, ... ]. 
+ * This data structure is formed via the CreateBulkTransactionsObject(data) function.
+ * @returns (Object) Response data from api request
+ */
+export function CreateBulkTransactions(data){
+    var endpoint = `${flaskEndpoint}/_api/bulkUploadTransactions`;
+    
+    var body = {
+        bulkData: data,
+    }
+
+    var options = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            "accessToken": localStorage.getItem("accessToken")
+        },
+        body: JSON.stringify(body)
+    }
+
+    return new Promise(function(resolve, reject){
+        fetch(endpoint, options)
+        .then(res => {
+            resolve(res);  
+        })
+        .catch((error) => {
+            reject(error);    
+        });
+    });
+}
+
 /**POST request to delete and existing transaction
  * 
  * @param transactionID (str) The transaction to remove.
@@ -181,6 +214,27 @@ function formatDate(date){
     return new Date(tempDate);
 }
 
+/**Given a date, format and return it as a different string
+ * @param date (String) A date in the format "MM/DD/YYYY"
+ * @returns A date in the format "YYYY-MM-DD"
+ */
+function formatDateAsYDM(date){
+    let dateArr = date.split("/");
+
+    // Pad any leading "0" characters to days/months that are only single digits
+    if(dateArr[0].length === 1){
+        dateArr[0] = "0" + dateArr[0];
+    }
+    if(dateArr[1].length === 1){
+        dateArr[1] = "0" + dateArr[1];
+    }
+
+    let result = `${dateArr[2]}-${dateArr[0]}-${dateArr[1]}`
+
+    return result;
+}
+
+
 /**Given array of transactions, create an object to represent the entire list
  * @param data ([Object]) Array of transaction data. Must be in the format [[date: str, title: str, debit: str], [date2: str, title2: str, debit2: str], ... ]
  * @returns An array of objects that's ready to be shipped to back-end, in the format: [ { date: str, title: str, amountSpent: str }, { ... }, ... ]
@@ -192,7 +246,7 @@ function CreateBulkTransactionsObject(data){
     for(let i = 0; i < data.length; i++){
 
         // Create object to store all the required transaction info
-        let currTransaction = {date: data[i][0].trim(), title: data[i][1].trim(), amountSpent: data[i][2].trim()};
+        let currTransaction = {date: formatDateAsYDM(data[i][0].trim()), title: data[i][1].trim(), amountSpent: data[i][2].trim()};
 
         result.push(currTransaction);   // Append to array
     }

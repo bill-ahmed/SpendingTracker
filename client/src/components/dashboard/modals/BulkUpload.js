@@ -1,6 +1,7 @@
 import React, {useState}  from 'react';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { CreateBulkTransactions } from '../../../api';
 import Dialog from '@material-ui/core/Dialog';
 import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
@@ -153,6 +154,12 @@ function BulkUpload(props){
             // Retrieve transaction records in proper format from helper
             let transactionData = TransactionDateHelper.CreateBulkTransactionsObject(fileUploadedData.data);
             console.log(transactionData);
+
+            // API call to bulk upload transaction data
+            CreateBulkTransactions(transactionData)
+            .then((resp) => console.log(resp))
+            .catch((resp) => console.log(resp));
+
         } else{
             setCurrStep(currStep + 1);
         }

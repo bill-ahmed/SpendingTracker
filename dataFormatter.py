@@ -1,6 +1,6 @@
 import datetime
 
-def validateDate(data: dict):
+def validateData(data: dict):
     ''' Validate the user data such as title, date, etc.\n
     (dict) -> bool
     '''
