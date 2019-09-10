@@ -10,16 +10,13 @@ You will need the following software on your computer: (1) Node.js and (2) Pytho
 
 2.1 Visit the Node.js download website: https://nodejs.org/en/download/<br/>
 2.2 Choose “Current” release and download for your OS<br/>
-2.3 Follow the installation normally<br/>
-2.4 Once you reach the “Tools for Native Modules” section, make sure to select the “Automatically install the necessary…” checkbox<br/>
-2.5 Click Next and Install
+2.3 Follow the installation normally and install<br/>
  
 
 ## Step 2: Installing Python 3
 
 3.1 Visit the Python 3 download website: https://www.python.org/downloads/<br/>
-3.2 Download and install the latest Python 3 version
-3.3 In Command Prompt/Bash/Any other Shell, run `pip install flask`
+3.2 Download and install the latest Python 3 version<br/>
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
